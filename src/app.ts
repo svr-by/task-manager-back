@@ -1,7 +1,9 @@
 import express from 'express';
 
-const app = express();
+import logEvents from '@/middlewares/logEvents';
 
+const app = express();
+app.use(logEvents);
 app.get('/', (req, res) => {
   res.send('Express + TypeScript Server');
 });

@@ -1,6 +1,7 @@
 import http from 'http';
 import app from '@/app';
 import config from '@/common/config';
+import { logger } from '@/middlewares/logEvents';
 
 const { PORT } = config;
 
@@ -9,10 +10,10 @@ const server = http.createServer(app);
 (async () => {
   try {
     server.listen(PORT, () => {
-      console.log(`Server started at ${PORT}`);
+      logger.info(`Server started at ${PORT}`);
     });
   } catch (err) {
-    console.log(`Server error: ${err}`);
+    logger.error(`Server error: ${(err as Error).message}`);
   }
 })();
 
