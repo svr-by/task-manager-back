@@ -1,0 +1,38 @@
+{
+  "compilerOptions": {
+    "target": "es2016",                                /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */
+    "lib": ["ESNext"],                                 /* Specify a set of bundled library declaration files that describe the target runtime environment. */
+    "useDefineForClassFields": true,                   /* Emit ECMAScript-standard-compliant class fields. */
+    "module": "CommonJS",                              /* Specify what module code is generated. */
+    "baseUrl": "./",                                   /* Specify the base directory to resolve non-relative module names. */
+    "typeRoots": [
+      "src/types/@types",
+      "node_modules/@types",
+    ], 
+    "paths": {
+      "@/*": ["src/*"],
+      "@tests/*": ["tests/*"],
+    },                                                 /* Specify a set of entries that re-map imports to additional lookup locations. */
+    "resolveJsonModule": true,                         /* Enable importing .json files. */
+    "allowJs": false,                                  /* Allow JavaScript files to be a part of your program. Use the 'checkJS' option to get errors from these files. */
+    "outDir": "dist",                                /* Specify an output folder for all emitted files. */
+    "isolatedModules": true,                           /* Ensure that each file can be safely transpiled without relying on other imports. */
+    "allowSyntheticDefaultImports": true,              /* Allow 'import x from y' when a module doesn't have a default export. */
+    "esModuleInterop": true,                           /* Emit additional JavaScript to ease support for importing CommonJS modules. This enables 'allowSyntheticDefaultImports' for type compatibility. */
+    "forceConsistentCasingInFileNames": true,          /* Ensure that casing is correct in imports. */
+    "strict": true,                                    /* Enable all strict type-checking options. */
+    "noImplicitAny": true,                             /* Enable error reporting for expressions and declarations with an implied 'any' type. */
+    "noFallthroughCasesInSwitch": true,                /* Enable error reporting for fallthrough cases in switch statements. */
+    "skipLibCheck": true,                              /* Skip type checking all .d.ts files. */
+    "plugins":[
+      {
+         "transform":"typescript-transform-paths"      /* Transform paths in output .js files */
+      },
+      {
+         "transform":"typescript-transform-paths",     /* Transform paths in output .d.ts files */
+         "afterDeclarations": true
+      }
+   ],
+  },
+  "include": ["src/", "tests/"],
+}
