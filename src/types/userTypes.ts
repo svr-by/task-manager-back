@@ -11,9 +11,8 @@ export interface IUser {
 }
 
 export interface IUserMethods {
-  filterTokens: (excessToken: string) => Promise<void>;
-  generateAccessToken: () => Promise<string | undefined>;
-  generateRefreshToken: (expiredToken?: string) => Promise<string | undefined>;
+  filterTokens: (excessToken?: string) => Promise<void>;
+  generateTokens: (excessToken?: string) => Promise<(string | undefined)[]>;
 }
 
 export interface IUserModel extends Model<IUser, {}, IUserMethods> {}
@@ -21,3 +20,5 @@ export interface IUserModel extends Model<IUser, {}, IUserMethods> {}
 export type TTknPayload = { uid: string };
 
 export type TUserSignupInput = Pick<IUser, 'name' | 'email' | 'password'>;
+
+export type TUserSigninInput = Pick<IUser, 'email' | 'password'>;

@@ -1,11 +1,11 @@
 import { Schema, model } from 'mongoose';
 
-import { IUser } from '@/types/userTypes';
+import { IUser, IUserModel, IUserMethods } from '@/types/userTypes';
 import { COLLECTIONS, MODEL_NAME } from '@/common/enums';
 import { getAccToken, getRfrToken, decodeRfrToken } from '@/services/tokenService';
 import { hashPassword } from '@/services/hashService';
 
-const userScheme = new Schema<IUser>(
+const userScheme = new Schema<IUser, IUserModel, IUserMethods>(
   {
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
@@ -39,23 +39,22 @@ userScheme.pre('save', async function (next) {
   }
 });
 
-userScheme.method('filterTokens', async function (excessToken) {
+userScheme.method('filterTokens', async function (excessToken?: string) {
   this.tokens = this.tokens.filter((token) => token !== excessToken && decodeRfrToken(token));
   await this.save();
 });
 
-userScheme.method('generateAccessToken', async function () {
-  return getAccToken({ uid: this._id.toString() });
-});
-
-userScheme.method('generateRefreshToken', async function (expiredToken) {
-  this.tokens = this.tokens.filter((token) => token !== expiredToken && decodeRfrToken(token));
+userScheme.method('generateTokens', async function (excessToken?: string) {
+  if (excessToken) {
+    this.tokens = this.tokens.filter((token) => token !== excessToken && decodeRfrToken(token));
+  }
+  const accessToken = getAccToken({ uid: this._id.toString() });
   const refreshToken = getRfrToken({ uid: this._id.toString() });
   if (refreshToken) {
     this.tokens.push(refreshToken);
     await this.save();
   }
-  return refreshToken;
+  return [accessToken, refreshToken];
 });
 
-export default model<IUser>(MODEL_NAME.USER, userScheme);
+export default model<IUser, IUserModel>(MODEL_NAME.USER, userScheme);

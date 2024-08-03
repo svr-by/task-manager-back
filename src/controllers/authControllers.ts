@@ -1,16 +1,23 @@
 import { Response, Request } from 'express';
 import { StatusCodes } from 'http-status-codes';
 
-import { TUserSignupInput } from '@/types/userTypes';
+import { TUserSignupInput, TUserSigninInput } from '@/types/userTypes';
 import { asyncErrorHandler, validationErrorHandler } from '@/services/errorService';
 import { getConfToken, decodeConfToken } from '@/services/tokenService';
 import { sendConfEmail } from '@/services/emailService';
-import { EntityExistsError, BadRequestError, NotFoundError } from '@/common/appError';
+import { checkPassword } from '@/services/hashService';
+import {
+  EntityExistsError,
+  BadRequestError,
+  NotFoundError,
+  AuthorizationError,
+} from '@/common/appError';
 import { USER_ERR_MES } from '@/common/errorMessages';
+import { cookieOptions } from '@/common/cookieOptions';
 import config from '@/common/config';
 import User from '@/models/userModel';
 
-const { NODE_ENV } = config;
+const { NODE_ENV, JWT_COOKIE_NAME } = config;
 
 export const signUp = asyncErrorHandler(
   async (req: Request<{}, {}, TUserSignupInput>, res: Response) => {
@@ -49,3 +56,25 @@ export const confirmation = asyncErrorHandler(async (req, res) => {
   await user.save();
   res.send('Email confirmation completed');
 });
+
+export const signIn = asyncErrorHandler(
+  async (req: Request<{}, {}, TUserSigninInput>, res: Response) => {
+    validationErrorHandler(req);
+    const { email, password } = req.body;
+    const user = await User.findOne({ email });
+    if (!user) {
+      throw new NotFoundError(USER_ERR_MES.EMAIL_NOT_FOUND);
+    }
+    const isCorrectPassword = await checkPassword(password, user.password);
+    if (!isCorrectPassword) {
+      throw new AuthorizationError(USER_ERR_MES.PWD_INCORRECT);
+    }
+    if (!user.isVerified) {
+      throw new AuthorizationError(USER_ERR_MES.NOT_CONFIRMED);
+    }
+    const oldRefreshToken = req.cookies?.[JWT_COOKIE_NAME];
+    const [accessToken, refreshToken] = await user.generateTokens(oldRefreshToken);
+    res.cookie(JWT_COOKIE_NAME, refreshToken, cookieOptions);
+    res.json({ token: accessToken, user });
+  }
+);

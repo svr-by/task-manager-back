@@ -13,4 +13,5 @@ export enum USER_ERR_MES {
   PWD_INCORRECT = 'Password is not correct',
   PWD_EPMTY = 'Password must not be empty',
   PWD_INVALID = 'Password length is not valid',
+  NOT_CONFIRMED = 'User has not confirmed the email',
 }
