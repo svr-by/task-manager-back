@@ -19,3 +19,5 @@ export interface IUserMethods {
 export interface IUserModel extends Model<IUser, {}, IUserMethods> {}
 
 export type TTknPayload = { uid: string };
+
+export type TUserSignupInput = Pick<IUser, 'name' | 'email' | 'password'>;

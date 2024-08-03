@@ -12,13 +12,13 @@ const {
 } = config;
 
 const getToken = (payload: TTknPayload, secretKey?: string, expiresIn?: number) => {
-  return secretKey && jwt.sign(payload, secretKey, expiresIn && { expiresIn });
+  return secretKey && jwt.sign(payload, secretKey, (expiresIn && { expiresIn }) as jwt.SignOptions);
 };
 
 const decodeToken = (token: string, secretKey?: string, options?: jwt.VerifyOptions) => {
   try {
     const decoded = secretKey && jwt.verify(token, secretKey, options);
-    return decoded;
+    return decoded as TTknPayload | undefined;
   } catch (error) {
     return;
   }

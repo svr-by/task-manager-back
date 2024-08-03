@@ -31,14 +31,14 @@ export class EntityExistsError extends AppError {
 }
 
 export class AuthorizationError extends AppError {
-  constructor(message: string) {
+  constructor(message?: string) {
     super(message || getReasonPhrase(StatusCodes.UNAUTHORIZED));
     this.status = StatusCodes.UNAUTHORIZED;
   }
 }
 
 export class AuthenticationError extends AppError {
-  constructor(message: string) {
+  constructor(message?: string) {
     super(message || getReasonPhrase(StatusCodes.FORBIDDEN));
     this.status = StatusCodes.FORBIDDEN;
   }
