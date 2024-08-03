@@ -121,9 +121,9 @@ export const signOut = asyncErrorHandler(async (req: Request, res: Response) => 
   if (!refreshToken) {
     return res.sendStatus(StatusCodes.RESET_CONTENT);
   }
-  const userId = req.userId;
-  if (userId) {
-    const user = await User.findById(userId).exec();
+  const decodedRfTkn = decodeRfrToken(refreshToken);
+  if (decodedRfTkn) {
+    const user = await User.findById(decodedRfTkn.uid).exec();
     await user?.filterTokens(refreshToken);
   }
   res.clearCookie(JWT_COOKIE_NAME, cookieOptions);
