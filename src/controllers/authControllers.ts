@@ -48,7 +48,7 @@ export const signUp = asyncErrorHandler(
   }
 );
 
-export const confirmation = asyncErrorHandler(async (req, res) => {
+export const confirmation = asyncErrorHandler(async (req: Request, res: Response) => {
   const confToken = req.params.token;
   const decodedConfTkn = decodeConfToken(confToken);
   if (!decodedConfTkn) {
@@ -85,7 +85,7 @@ export const signIn = asyncErrorHandler(
   }
 );
 
-export const refresh = asyncErrorHandler(async (req, res) => {
+export const refresh = asyncErrorHandler(async (req: Request, res: Response) => {
   const refreshToken = req.cookies?.[JWT_COOKIE_NAME];
   if (!refreshToken) {
     return res.sendStatus(StatusCodes.NO_CONTENT);
@@ -113,6 +113,19 @@ export const refresh = asyncErrorHandler(async (req, res) => {
   }
   const [newAccessToken, newRefreshToken] = await user.generateTokens(refreshToken);
   res.cookie(JWT_COOKIE_NAME, newRefreshToken, cookieOptions);
-
   res.status(StatusCodes.CREATED).json({ token: newAccessToken, user });
+});
+
+export const signOut = asyncErrorHandler(async (req: Request, res: Response) => {
+  const refreshToken = req.cookies?.[JWT_COOKIE_NAME];
+  if (!refreshToken) {
+    return res.sendStatus(StatusCodes.RESET_CONTENT);
+  }
+  const userId = req.userId;
+  if (userId) {
+    const user = await User.findById(userId).exec();
+    await user?.filterTokens(refreshToken);
+  }
+  res.clearCookie(JWT_COOKIE_NAME, cookieOptions);
+  res.sendStatus(StatusCodes.RESET_CONTENT);
 });
