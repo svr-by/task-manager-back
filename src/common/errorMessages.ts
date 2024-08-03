@@ -1,3 +1,7 @@
+export enum COMMON_ERR_MES {
+  DB_ERROR = 'Database access error',
+}
+
 export enum USER_ERR_MES {
   ACC_TKN_EXPIRED = 'Access token has expired',
   ACC_TKN_INVALID = 'Invalid access token',

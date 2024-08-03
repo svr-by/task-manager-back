@@ -1,11 +1,12 @@
 import { getReasonPhrase, StatusCodes } from 'http-status-codes';
 
 export class AppError extends Error {
-  status?: number;
+  status: number;
 
   constructor(message: string) {
     super(message);
     this.name = 'AppError';
+    this.status = StatusCodes.INTERNAL_SERVER_ERROR;
   }
 }
 
