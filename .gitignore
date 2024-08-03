@@ -1,8 +1,11 @@
 # Compiled output
 /dist
+/logs
 /tmp
+/files
 /out-tsc
 /bazel-out
+.env
 
 # Node
 /node_modules

@@ -1,0 +1,212 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "0.1.0", 
+    "title": "ACSA backend",
+    "description": "Analytics and Control Sales App API",
+    "license": "ISC"
+  },
+
+  "tags": [
+    {
+      "name": "Auth",
+      "description": "API for signIn/signUp"
+    }
+  ],
+  "definitions" : {
+    "User": {
+      "required": [
+        "id",
+        "name",
+        "email"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "notes": {
+          "type": "string"
+        } 
+      }
+    }
+  },
+  "securityDefinitions":{
+    "Bearer":{
+      "type": "apiKey",
+      "name": "Authorization",
+      "description": "Enter your token in format *Bearer token*",
+      "in": "header"
+    }
+  },
+  "consumes": ["application/json"],
+  "produces": ["application/json"],
+  "paths":{
+    "/auth/signup": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Sign up",
+        "description": "Create new user",
+        "parameters": [
+          {
+            "name": "user",
+            "in": "body",
+            "description": "User params",
+            "schema": {
+              "required": [
+                "name",
+                "email",
+                "password"
+              ],
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "email": {
+                  "type": "string"
+                },
+                "password": {
+                  "type": "string"
+                }       
+              },
+              "example": {
+                "name": "Elon Musk",
+                "email": "musk@tesla.com",
+                "password": "Tesla4ever"
+              }
+            }
+            
+          }
+        ],
+        "produces": ["application/json"],
+        "responses": {
+          "201": {
+            "description": "New user created",
+            "schema": {
+              "properties": {
+                "token": {
+                  "type": "string"
+                },
+                "id": {
+                  "type": "string"
+                }  
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "409": {
+            "description": "User with this email already exists"
+          }
+        }
+      }
+    },
+    "/auth/signin": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Sign in",
+        "description": "Get access token",
+        "parameters": [
+          {
+            "name": "AuthInfo",
+            "in": "body",
+            "description": "User auth info",
+            "schema": {
+              "required": [
+                "email",
+                "password"
+              ],
+              "properties": {
+                "email": {
+                  "type": "string"
+                },       
+                "password": {
+                  "type": "string"
+                }       
+              },
+              "example": {
+                "email": "musk@tesla.com",
+                "password": "Tesla4ever"
+              }
+            }
+          }
+        ],
+        "produces": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "Successeful login",
+            "schema": {
+              "properties": {
+                "token": {
+                  "type": "string"
+                },
+                "id": {
+                  "type": "string"
+                }  
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Authorization error"
+          }
+        }
+      }
+    },
+    "/auth/signout": {
+      "get": {
+        "tags": ["Auth"],
+        "summary": "Sign out",
+        "description": "Clear refresh token",
+        "produces": ["application/json"],
+        "responses": {
+          "205": {
+            "description": "Reset Content"
+          }
+        }
+      }
+    },
+    "/auth/refresh": {
+      "get": {
+        "security": [
+          {
+             "Bearer": []
+          }
+        ],
+        "tags": ["Auth"],
+        "summary": "Refresh tokens",
+        "description": "Get a new access token",
+        "produces": ["application/json"],
+        "responses": {
+          "201": {
+            "description": "New token created",
+            "schema": {
+              "properties": {
+                "token": {
+                  "type": "string"
+                },
+                "id": {
+                  "type": "string"
+                }  
+              }
+            }
+          },
+          "401": {
+            "description": "Authorization error"
+          },
+          "403": {
+            "description": "Forbidden "
+          }
+        }
+      }
+    }
+  }
+}
