@@ -3,14 +3,20 @@ import { StatusCodes } from 'http-status-codes';
 
 import { TUserSignupInput, TUserSigninInput } from '@/types/userTypes';
 import { asyncErrorHandler, validationErrorHandler } from '@/services/errorService';
-import { getConfToken, decodeConfToken } from '@/services/tokenService';
 import { sendConfEmail } from '@/services/emailService';
 import { checkPassword } from '@/services/hashService';
+import {
+  getConfToken,
+  decodeConfToken,
+  decodeRfrToken,
+  decodeAccToken,
+} from '@/services/tokenService';
 import {
   EntityExistsError,
   BadRequestError,
   NotFoundError,
   AuthorizationError,
+  ForbiddenError,
 } from '@/common/appError';
 import { USER_ERR_MES } from '@/common/errorMessages';
 import { cookieOptions } from '@/common/cookieOptions';
@@ -78,3 +84,35 @@ export const signIn = asyncErrorHandler(
     res.json({ token: accessToken, user });
   }
 );
+
+export const refresh = asyncErrorHandler(async (req, res) => {
+  const refreshToken = req.cookies?.[JWT_COOKIE_NAME];
+  if (!refreshToken) {
+    return res.sendStatus(StatusCodes.NO_CONTENT);
+  }
+  const authHeader = req.header('Authorization');
+  const accessToken = authHeader?.split(' ')[1];
+  if (!accessToken) {
+    res.clearCookie(JWT_COOKIE_NAME, cookieOptions);
+    return res.sendStatus(StatusCodes.NO_CONTENT);
+  }
+  const decodedRfTkn = decodeRfrToken(refreshToken);
+  if (!decodedRfTkn) {
+    res.clearCookie(JWT_COOKIE_NAME, cookieOptions);
+    throw new AuthorizationError(USER_ERR_MES.RFR_TKN_INVALID);
+  }
+  const user = await User.findById(decodedRfTkn.uid);
+  if (!user || !user.tokens.includes(refreshToken)) {
+    res.clearCookie(JWT_COOKIE_NAME, cookieOptions);
+    throw new AuthorizationError(USER_ERR_MES.NOT_FOUND);
+  }
+  const decodedAcTkn = decodeAccToken(accessToken, { ignoreExpiration: true });
+  if (decodedRfTkn.uid !== user._id?.toString() || decodedRfTkn.uid !== decodedAcTkn?.uid) {
+    res.clearCookie(JWT_COOKIE_NAME, cookieOptions);
+    throw new ForbiddenError(USER_ERR_MES.TKN_MISMATCH);
+  }
+  const [newAccessToken, newRefreshToken] = await user.generateTokens(refreshToken);
+  res.cookie(JWT_COOKIE_NAME, newRefreshToken, cookieOptions);
+
+  res.status(StatusCodes.CREATED).json({ token: newAccessToken, user });
+});

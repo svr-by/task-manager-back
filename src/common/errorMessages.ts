@@ -3,6 +3,8 @@ export enum USER_ERR_MES {
   ACC_TKN_INVALID = 'Invalid access token',
   CONF_TKN_INVALID = 'Confirmation token is invalid',
   CONF_USER_NOT_FOUND = 'The user with this token not found',
+  RFR_TKN_INVALID = 'Invalid refresh token',
+  TKN_MISMATCH = 'Token mismatch',
   NAME_EPMTY = 'Name must not be empty',
   NAME_LENGTH = 'Name must be from 3 to 50 chars',
   NAME_INVALID = 'Name length is not valid',
@@ -14,4 +16,5 @@ export enum USER_ERR_MES {
   PWD_EPMTY = 'Password must not be empty',
   PWD_INVALID = 'Password length is not valid',
   NOT_CONFIRMED = 'User has not confirmed the email',
+  NOT_FOUND = 'User not found',
 }

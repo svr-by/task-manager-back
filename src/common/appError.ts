@@ -37,7 +37,7 @@ export class AuthorizationError extends AppError {
   }
 }
 
-export class AuthenticationError extends AppError {
+export class ForbiddenError extends AppError {
   constructor(message?: string) {
     super(message || getReasonPhrase(StatusCodes.FORBIDDEN));
     this.status = StatusCodes.FORBIDDEN;
