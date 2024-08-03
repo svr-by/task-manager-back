@@ -43,7 +43,7 @@ export const sendEmail = async ({ email, subject, text, html }: ISendEmail) => {
   }
 };
 
-export const sendConfirmationEmail = async ({ email, confUrl }: ISendConfirmationEmail) => {
+export const sendConfEmail = async ({ email, confUrl }: ISendConfirmationEmail) => {
   const subject = 'Подтверждение email';
 
   const content = `

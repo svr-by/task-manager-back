@@ -1,6 +1,8 @@
 export enum USER_ERR_MES {
   ACC_TKN_EXPIRED = 'Access token has expired',
   ACC_TKN_INVALID = 'Invalid access token',
+  CONF_TKN_INVALID = 'Confirmation token is invalid',
+  CONF_USER_NOT_FOUND = 'The user with this token not found',
   NAME_EPMTY = 'Name must not be empty',
   NAME_LENGTH = 'Name must be from 3 to 50 chars',
   NAME_INVALID = 'Name length is not valid',
