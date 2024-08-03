@@ -1,12 +1,11 @@
-# Variables
-.env
-
 # Compiled output
 /dist
 /logs
 /tmp
+/files
 /out-tsc
 /bazel-out
+.env
 
 # Node
 /node_modules
@@ -21,7 +20,6 @@ yarn-error.log
 *.launch
 .settings/
 *.sublime-workspace
-
 
 # Visual Studio Code
 .vscode/*
