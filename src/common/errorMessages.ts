@@ -1,5 +1,6 @@
 export enum COMMON_ERR_MES {
   DB_ERROR = 'Database access error',
+  DB_ID_INVALID = 'Invalid database document ID',
 }
 
 export enum USER_ERR_MES {
@@ -21,4 +22,5 @@ export enum USER_ERR_MES {
   PWD_INVALID = 'Password length is not valid',
   NOT_CONFIRMED = 'User has not confirmed the email',
   NOT_FOUND = 'User not found',
+  ACCESS_DENIED = 'Access to change other users is denied',
 }
