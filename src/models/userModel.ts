@@ -1,6 +1,6 @@
 import { Schema, model } from 'mongoose';
 
-import { IUser, IUserModel, IUserMethods } from '@/types/userTypes';
+import { IUser, IUserModel, IUserMethods, TUserUpdateInput } from '@/types/userTypes';
 import { COLLECTIONS, MODEL_NAME } from '@/common/enums';
 import { getAccToken, getRfrToken, decodeRfrToken } from '@/services/tokenService';
 import { hashPassword } from '@/services/hashService';
@@ -12,7 +12,6 @@ const userScheme = new Schema<IUser, IUserModel, IUserMethods>(
     password: { type: String, required: true },
     isVerified: { type: Boolean, default: false, required: true },
     tokens: { type: [String] },
-    notes: { type: String },
   },
   {
     collection: COLLECTIONS.USERS,
@@ -32,6 +31,19 @@ userScheme.pre('save', async function (next) {
   try {
     if (this.isModified('password')) {
       this.password = await hashPassword(this.password);
+    }
+    next();
+  } catch (error) {
+    next(error as Error);
+  }
+});
+
+userScheme.pre(['updateOne', 'findOneAndUpdate'], async function (next) {
+  try {
+    const update = this.getUpdate() as TUserUpdateInput;
+    if (update?.password) {
+      const hashedPassword = await hashPassword(update?.password);
+      this.setUpdate({ ...update, password: hashedPassword });
     }
     next();
   } catch (error) {

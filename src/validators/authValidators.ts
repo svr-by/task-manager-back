@@ -5,7 +5,7 @@ import config from '@/common/config';
 
 const { MIN_PASSWORD_LENGTH, MAX_PASSWORD_LENGTH } = config;
 
-export const validateSignUpParams = () => [
+export const validateBodyName = () =>
   body('name', USER_ERR_MES.NAME_EPMTY)
     .isString()
     .trim()
@@ -13,32 +13,28 @@ export const validateSignUpParams = () => [
     .isLength({ min: 3, max: 50 })
     .withMessage(USER_ERR_MES.NAME_LENGTH)
     .matches(NAME_REGEX)
-    .withMessage(USER_ERR_MES.NAME_INVALID),
+    .withMessage(USER_ERR_MES.NAME_INVALID);
+
+export const validateBodyEmail = () =>
   body('email', USER_ERR_MES.EMAIL_EPMTY)
     .trim()
     .toLowerCase()
     .notEmpty()
     .isEmail()
-    .withMessage(USER_ERR_MES.EMAIL_INVALID),
+    .withMessage(USER_ERR_MES.EMAIL_INVALID);
+
+export const validateBodyPwd = () =>
   body('password', USER_ERR_MES.PWD_EPMTY)
     .isString()
     .trim()
     .notEmpty()
     .isLength({ min: MIN_PASSWORD_LENGTH, max: MAX_PASSWORD_LENGTH })
-    .withMessage(USER_ERR_MES.PWD_INVALID),
+    .withMessage(USER_ERR_MES.PWD_INVALID);
+
+export const validateSignUpParams = () => [
+  validateBodyName(),
+  validateBodyEmail(),
+  validateBodyPwd(),
 ];
 
-export const validateSignInParams = () => [
-  body('email', USER_ERR_MES.EMAIL_EPMTY)
-    .trim()
-    .toLowerCase()
-    .notEmpty()
-    .isEmail()
-    .withMessage(USER_ERR_MES.EMAIL_INVALID),
-  body('password', USER_ERR_MES.PWD_EPMTY)
-    .isString()
-    .trim()
-    .notEmpty()
-    .isLength({ min: MIN_PASSWORD_LENGTH, max: MAX_PASSWORD_LENGTH })
-    .withMessage(USER_ERR_MES.PWD_INVALID),
-];
+export const validateSignInParams = () => [validateBodyEmail(), validateBodyPwd()];
