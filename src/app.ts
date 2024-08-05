@@ -18,7 +18,7 @@ app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use(logEvents);
 app.use('/auth', authRouter);
 app.use(verifyToken);
-app.use('/user', userRouter);
+app.use('/users', userRouter);
 app.use(errorHandler);
 app.get('*', (req, res) => {
   res.sendStatus(StatusCodes.NOT_FOUND);
