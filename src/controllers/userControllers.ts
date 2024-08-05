@@ -15,9 +15,9 @@ export const getAllUsers = asyncErrorHandler(async (req: Request, res: Response)
 export const getUser = asyncErrorHandler(async (req: Request, res: Response) => {
   validationErrorHandler(req);
   const userId = req.params.id;
-  const user = await User.findById(userId).exec();
+  const user = await User.findById(userId);
   if (!user) {
-    throw new NotFoundError(USER_ERR_MES.CONF_USER_NOT_FOUND);
+    throw new NotFoundError(USER_ERR_MES.NOT_FOUND);
   }
   res.json(user);
 });
@@ -30,14 +30,24 @@ export const updateUser = asyncErrorHandler(
       throw new ForbiddenError(USER_ERR_MES.ACCESS_DENIED);
     }
     const { name, password } = req.body;
-    const updatedUser = await User.findByIdAndUpdate(
-      userId,
-      { name, password },
-      { new: true }
-    ).exec();
+    const updatedUser = await User.findByIdAndUpdate(userId, { name, password }, { new: true });
     if (!updatedUser) {
-      throw new NotFoundError(USER_ERR_MES.CONF_USER_NOT_FOUND);
+      throw new NotFoundError(USER_ERR_MES.NOT_FOUND);
     }
     res.json(updatedUser);
   }
 );
+
+export const deleteUser = asyncErrorHandler(async (req, res) => {
+  validationErrorHandler(req);
+  const userId = req.params.id;
+  if (userId !== req.userId) {
+    throw new ForbiddenError(USER_ERR_MES.ACCESS_DENIED);
+  }
+  //TODO: check user projects
+  const deletedUser = await User.findByIdAndDelete(userId);
+  if (!deletedUser) {
+    throw new NotFoundError(USER_ERR_MES.NOT_FOUND);
+  }
+  res.json(deletedUser);
+});
