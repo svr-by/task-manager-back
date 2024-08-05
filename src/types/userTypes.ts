@@ -22,3 +22,5 @@ export type TTknPayload = { uid: string };
 export type TUserSignupInput = Pick<IUser, 'name' | 'email' | 'password'>;
 
 export type TUserSigninInput = Pick<IUser, 'email' | 'password'>;
+
+export type TUserUpdateInput = Partial<Pick<IUser, 'name' | 'password'>>;

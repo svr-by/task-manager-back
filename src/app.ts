@@ -8,6 +8,7 @@ import verifyToken from '@/middlewares/verifyToken';
 import errorHandler from '@/middlewares/errorHandler';
 import swaggerDocument from '@/common/swagger.json';
 import authRouter from '@/routes/authRouter';
+import userRouter from '@/routes/userRouter';
 
 const app = express();
 
@@ -17,6 +18,7 @@ app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use(logEvents);
 app.use('/auth', authRouter);
 app.use(verifyToken);
+app.use('/users', userRouter);
 app.use(errorHandler);
 app.get('*', (req, res) => {
   res.sendStatus(StatusCodes.NOT_FOUND);
