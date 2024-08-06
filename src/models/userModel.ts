@@ -51,7 +51,7 @@ userScheme.pre(['updateOne', 'findOneAndUpdate'], async function (next) {
   }
 });
 
-userScheme.method('filterTokens', async function (excessToken?: string) {
+userScheme.method('filterTokens', async function (excessToken: string) {
   this.tokens = this.tokens.filter((token) => token !== excessToken && decodeRfrToken(token));
   await this.save();
 });
