@@ -1,4 +1,9 @@
-import { validateBodyTitle, validateBodyDesc, validateParamId } from './commonValidator';
+import {
+  validateBodyTitle,
+  validateBodyDesc,
+  validateParamId,
+  validateBodyEmail,
+} from './commonValidator';
 
 export const validateCreateProjectParams = () => [
   validateBodyTitle(),
@@ -10,3 +15,5 @@ export const validateUpdateProjectParams = () => [
   validateBodyTitle().optional(),
   validateBodyDesc().optional(),
 ];
+
+export const validateInviteProjectParams = () => [validateParamId(), validateBodyEmail()];

@@ -2,6 +2,7 @@ import express from 'express';
 import {
   validateCreateProjectParams,
   validateUpdateProjectParams,
+  validateInviteProjectParams,
 } from '@/validators/projectValidator';
 import {
   createProject,
@@ -9,6 +10,7 @@ import {
   getProject,
   updateProject,
   deleteProject,
+  inviteUser,
 } from '@/controllers/projectController';
 import { validateParamId } from '@/validators/commonValidator';
 
@@ -19,5 +21,6 @@ projectsRouter.get('/', getAllProjects);
 projectsRouter.get('/:id', validateParamId(), getProject);
 projectsRouter.put('/:id', validateUpdateProjectParams(), updateProject);
 projectsRouter.delete('/:id', validateParamId(), deleteProject);
+projectsRouter.post('/:id/invite', validateInviteProjectParams(), inviteUser);
 
 export default projectsRouter;
