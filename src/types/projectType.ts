@@ -18,3 +18,5 @@ export interface IProjectMethods {
 export interface IProjectModel extends Model<IProject, {}, IProjectMethods> {}
 
 export type TProjectCreateInput = Pick<IProject, 'title' | 'description'>;
+
+export type TProjectUpdateInput = Partial<Pick<IProject, 'title' | 'description'>>;

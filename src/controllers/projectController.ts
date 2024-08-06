@@ -2,7 +2,7 @@ import { Response, Request } from 'express';
 import { StatusCodes } from 'http-status-codes';
 
 import { asyncErrorHandler, validationErrorHandler } from '@/services/errorService';
-import { TProjectCreateInput } from '@/types/projectType';
+import { TProjectCreateInput, TProjectUpdateInput } from '@/types/projectType';
 import { PROJECT_ERR_MES } from '@/common/errorMessages';
 import { EntityExistsError, NotFoundError, ForbiddenError } from '@/common/appError';
 import Project from '@/models/projectModel';
@@ -41,3 +41,21 @@ export const getProject = asyncErrorHandler(async (req: Request, res: Response) 
   }
   res.json(project);
 });
+
+export const updateProject = asyncErrorHandler(
+  async (req: Request<Record<string, string>, {}, TProjectUpdateInput>, res: Response) => {
+    validationErrorHandler(req);
+    const projectId = req.params.id;
+    const userId = req.userId;
+    const { title, description } = req.body;
+    const updatedProject = await Project.findOneAndUpdate(
+      { _id: projectId, ownerRef: userId },
+      { title, description },
+      { new: true }
+    );
+    if (!updatedProject) {
+      throw new NotFoundError(PROJECT_ERR_MES.NOT_FOUND_OR_NO_ACCESS);
+    }
+    res.json(updatedProject);
+  }
+);
