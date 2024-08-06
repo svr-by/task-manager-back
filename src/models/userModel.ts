@@ -1,6 +1,6 @@
 import { Schema, model } from 'mongoose';
 
-import { IUser, IUserModel, IUserMethods, TUserUpdateInput } from '@/types/userTypes';
+import { IUser, IUserModel, IUserMethods, TUserUpdateInput } from '@/types/userType';
 import { COLLECTIONS, MODEL_NAME } from '@/common/enums';
 import { getAccToken, getRfrToken, decodeRfrToken } from '@/services/tokenService';
 import { hashPassword } from '@/services/hashService';

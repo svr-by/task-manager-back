@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 import config from '@/common/config';
 
-import { TTknPayload } from '@/types/userTypes';
+import { TTknPayload } from '@/types/userType';
 
 const {
   JWT_CONFIRMATION_KEY,

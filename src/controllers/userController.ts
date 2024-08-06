@@ -1,6 +1,6 @@
 import { Response, Request } from 'express';
 
-import { TUserUpdateInput } from '@/types/userTypes';
+import { TUserUpdateInput } from '@/types/userType';
 import { asyncErrorHandler, validationErrorHandler } from '@/services/errorService';
 import { USER_ERR_MES } from '@/common/errorMessages';
 import { NotFoundError, ForbiddenError } from '@/common/appError';

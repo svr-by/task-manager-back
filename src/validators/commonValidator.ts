@@ -1,40 +1,36 @@
-import { body } from 'express-validator';
-import { USER_ERR_MES } from '@/common/errorMessages';
+import { param, body } from 'express-validator';
+import { COMMON_ERR_MES, USER_ERR_MES } from '@/common/errorMessages';
 import { NAME_REGEX } from '@/common/regex';
 import config from '@/common/config';
 
 const { MIN_PASSWORD_LENGTH, MAX_PASSWORD_LENGTH } = config;
 
+export const validateParamId = () =>
+  param('id').isMongoId().withMessage(COMMON_ERR_MES.DB_ID_INVALID);
+
 export const validateBodyName = () =>
-  body('name', USER_ERR_MES.NAME_EPMTY)
+  body('name')
     .isString()
+    .withMessage(USER_ERR_MES.NAME_STRING)
     .trim()
-    .notEmpty()
     .isLength({ min: 3, max: 50 })
     .withMessage(USER_ERR_MES.NAME_LENGTH)
     .matches(NAME_REGEX)
-    .withMessage(USER_ERR_MES.NAME_INVALID);
+    .withMessage(USER_ERR_MES.NAME_CHARS);
 
 export const validateBodyEmail = () =>
-  body('email', USER_ERR_MES.EMAIL_EPMTY)
+  body('email')
     .trim()
     .toLowerCase()
     .notEmpty()
+    .withMessage(USER_ERR_MES.EMAIL_EPMTY)
     .isEmail()
     .withMessage(USER_ERR_MES.EMAIL_INVALID);
 
 export const validateBodyPwd = () =>
-  body('password', USER_ERR_MES.PWD_EPMTY)
+  body('password')
     .isString()
+    .withMessage(USER_ERR_MES.PWD_STRING)
     .trim()
-    .notEmpty()
     .isLength({ min: MIN_PASSWORD_LENGTH, max: MAX_PASSWORD_LENGTH })
-    .withMessage(USER_ERR_MES.PWD_INVALID);
-
-export const validateSignUpParams = () => [
-  validateBodyName(),
-  validateBodyEmail(),
-  validateBodyPwd(),
-];
-
-export const validateSignInParams = () => [validateBodyEmail(), validateBodyPwd()];
+    .withMessage(USER_ERR_MES.PWD_LENGTH);

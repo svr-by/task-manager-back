@@ -1,4 +1,4 @@
-import { TUserSignupInput } from '@/types/userTypes';
+import { TUserSignupInput } from '@/types/userType';
 
 export const userMock: TUserSignupInput = {
   name: 'New Musk',

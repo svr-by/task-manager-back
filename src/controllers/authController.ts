@@ -1,7 +1,7 @@
 import { Response, Request } from 'express';
 import { StatusCodes } from 'http-status-codes';
 
-import { TUserSignupInput, TUserSigninInput } from '@/types/userTypes';
+import { TUserSignupInput, TUserSigninInput } from '@/types/userType';
 import { asyncErrorHandler, validationErrorHandler } from '@/services/errorService';
 import { sendConfEmail } from '@/services/emailService';
 import { checkPassword } from '@/services/hashService';
