@@ -25,13 +25,16 @@ const projectScheme = new Schema<IProject, IProjectModel, IProjectMethods>(
   }
 );
 
-projectScheme.method('checkUserAccess', function (userId: string, options: { onlyOwner: boolean }) {
-  const isOwner = this.ownerRef.toString() === userId;
-  const isMember = options?.onlyOwner
-    ? false
-    : this.membersRef.map((memberRef) => memberRef.toString()).includes(userId);
-  return isOwner || isMember;
-});
+projectScheme.method(
+  'checkUserAccess',
+  function (userId: string, options?: { onlyOwner: boolean }) {
+    const isOwner = this.ownerRef.toString() === userId;
+    const isMember = options?.onlyOwner
+      ? false
+      : this.membersRef.map((memberRef) => memberRef.toString()).includes(userId);
+    return isOwner || isMember;
+  }
+);
 
 projectScheme.method('generateToken', async function (userId: string) {
   const invToken = getInvToken({ uid: userId });

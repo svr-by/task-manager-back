@@ -10,7 +10,7 @@ export interface IProject extends Document {
 }
 
 export interface IProjectMethods {
-  checkUserAccess: (userId: string, options: { onlyOwner: boolean }) => boolean;
+  checkUserAccess: (userId: string, options?: { onlyOwner: boolean }) => boolean;
   generateToken: (userId: string) => Promise<string | undefined>;
   filterTokens: (excessToken: string) => void;
 }

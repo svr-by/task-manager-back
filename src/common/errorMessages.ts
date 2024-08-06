@@ -32,4 +32,6 @@ export enum USER_ERR_MES {
 
 export enum PROJECT_ERR_MES {
   TITLE_EXIST = 'Project with this title already exists',
+  NOT_FOUND = 'Project not found',
+  NO_ACCESS = 'Access to the project not provided',
 }
