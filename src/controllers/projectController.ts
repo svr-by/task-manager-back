@@ -21,3 +21,8 @@ export const createProject = asyncErrorHandler(
     res.status(StatusCodes.CREATED).json(newProject);
   }
 );
+
+export const getAllProjects = asyncErrorHandler(async (req: Request, res: Response) => {
+  const projects = await Project.find({}, 'title');
+  res.json(projects);
+});
