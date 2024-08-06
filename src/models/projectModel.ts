@@ -1,8 +1,8 @@
 import { Schema, model } from 'mongoose';
 
 import { IProject, IProjectModel, IProjectMethods } from '@/types/projectType';
-import { COLLECTIONS, MODEL_NAME } from '@/common/enums';
 import { getInvToken, decodeInvToken } from '@/services/tokenService';
+import { COLLECTIONS, MODEL_NAME } from '@/common/enums';
 
 const projectScheme = new Schema<IProject, IProjectModel, IProjectMethods>(
   {
@@ -46,4 +46,4 @@ projectScheme.method('filterTokens', function (excessToken: string) {
   this.tokens = this.tokens.filter((token) => token !== excessToken && decodeInvToken(token));
 });
 
-export default model<IProject, IProjectModel>(MODEL_NAME.USER, projectScheme);
+export default model<IProject, IProjectModel>(MODEL_NAME.PROJECT, projectScheme);

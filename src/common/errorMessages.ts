@@ -1,6 +1,11 @@
 export enum COMMON_ERR_MES {
   DB_ERROR = 'Database access error',
   DB_ID_INVALID = 'Invalid database document ID',
+  TITLE_STRING = 'Title must be string',
+  TITLE_LENGTH = 'Title length is not valid',
+  TITLE_CHARS = 'Title chars is not valid',
+  DESC_STRING = 'Description must be string',
+  DESC_LENGTH = 'Description length is not valid',
 }
 
 export enum USER_ERR_MES {
@@ -23,4 +28,8 @@ export enum USER_ERR_MES {
   NOT_CONFIRMED = 'User has not confirmed the email',
   NOT_FOUND = 'User not found',
   ACCESS_DENIED = 'Access to change other users is denied',
+}
+
+export enum PROJECT_ERR_MES {
+  TITLE_EXIST = 'Project with this title already exists',
 }
