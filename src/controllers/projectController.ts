@@ -59,3 +59,15 @@ export const updateProject = asyncErrorHandler(
     res.json(updatedProject);
   }
 );
+
+export const deleteProject = asyncErrorHandler(async (req: Request, res: Response) => {
+  validationErrorHandler(req);
+  const projectId = req.params.id;
+  const userId = req.userId;
+  const deletedProject = await Project.findOneAndDelete({ _id: projectId, ownerRef: userId });
+  if (!deletedProject) {
+    throw new NotFoundError(PROJECT_ERR_MES.NOT_FOUND_OR_NO_ACCESS);
+  }
+  //TODO: delete columns and tasks of the project
+  res.status(StatusCodes.NO_CONTENT);
+});

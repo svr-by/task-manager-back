@@ -8,6 +8,7 @@ import {
   getAllProjects,
   getProject,
   updateProject,
+  deleteProject,
 } from '@/controllers/projectController';
 import { validateParamId } from '@/validators/commonValidator';
 
@@ -17,5 +18,6 @@ projectsRouter.post('/', validateCreateProjectParams(), createProject);
 projectsRouter.get('/', getAllProjects);
 projectsRouter.get('/:id', validateParamId(), getProject);
 projectsRouter.put('/:id', validateUpdateProjectParams(), updateProject);
+projectsRouter.delete('/:id', validateParamId(), deleteProject);
 
 export default projectsRouter;
