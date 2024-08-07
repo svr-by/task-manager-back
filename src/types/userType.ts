@@ -1,6 +1,6 @@
-import { Model, Types } from 'mongoose';
+import { Document, Model, Types } from 'mongoose';
 
-export interface IUser {
+export interface IUser extends Document {
   _id: Types.ObjectId;
   name: string;
   email: string;
@@ -11,7 +11,7 @@ export interface IUser {
 }
 
 export interface IUserMethods {
-  filterTokens: (excessToken?: string) => Promise<void>;
+  filterTokens: (excessToken: string) => Promise<void>;
   generateTokens: (excessToken?: string) => Promise<(string | undefined)[]>;
 }
 

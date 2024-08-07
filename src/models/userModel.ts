@@ -1,9 +1,9 @@
 import { Schema, model } from 'mongoose';
 
 import { IUser, IUserModel, IUserMethods, TUserUpdateInput } from '@/types/userType';
-import { COLLECTIONS, MODEL_NAME } from '@/common/enums';
 import { getAccToken, getRfrToken, decodeRfrToken } from '@/services/tokenService';
 import { hashPassword } from '@/services/hashService';
+import { COLLECTIONS, MODEL_NAME } from '@/common/enums';
 
 const userScheme = new Schema<IUser, IUserModel, IUserMethods>(
   {
@@ -51,7 +51,7 @@ userScheme.pre(['updateOne', 'findOneAndUpdate'], async function (next) {
   }
 });
 
-userScheme.method('filterTokens', async function (excessToken?: string) {
+userScheme.method('filterTokens', async function (excessToken: string) {
   this.tokens = this.tokens.filter((token) => token !== excessToken && decodeRfrToken(token));
   await this.save();
 });
