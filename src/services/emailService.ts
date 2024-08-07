@@ -77,7 +77,7 @@ export const sendConfEmail = async ({ email, confUrl }: ISendConfEmail) => {
   return sendEmail({ email, subject, html: content });
 };
 
-export const sendInvEmail = async ({ email, invUrl, title }: ISendInvEmail) => {
+export const sendInvMemberEmail = async ({ email, invUrl, title }: ISendInvEmail) => {
   const subject = `Приглашение в проект "${title}"`;
   const content = `
     <html>
@@ -102,5 +102,33 @@ export const sendInvEmail = async ({ email, invUrl, title }: ISendInvEmail) => {
       </p>
     </html>
     `;
+  return sendEmail({ email, subject, html: content });
+};
+
+export const sendInvOwnerEmail = async ({ email, invUrl, title }: ISendInvEmail) => {
+  const subject = `Приглашение возглавить проект "${title}"`;
+  const content = `
+  <html>
+    <h2>Вас приглашают стать руководителем проекта!</h2>
+    <p>Вы получили это письмо потому, что руководитель проекта <strong>"${title}"</strong> предлагает Вам принять управление на себя.<br/>
+      Пожалуйста, перейдите по следующей ссылке, чтобы возглавить проект.
+    </p>
+    <p>
+      <a href=${invUrl} clicktracking=off>${invUrl}</a>
+    </p>
+    <p>
+      <em>
+        Если Вы отказываетесь от предложения, можете просто проигнорировать это письмо.
+      </em>
+    </p>
+    <p>
+    <small>
+      <em>
+        Срок действия этой ссылки <strong>истекает через ${JWT_INVITE_EXPIRE_TIME / 60 / 60} часа</strong> с момента получения данного письма.
+      </em>
+    <small/>
+    </p>
+  </html>
+  `;
   return sendEmail({ email, subject, html: content });
 };

@@ -7,7 +7,7 @@ import {
   TProjectInviteUserInput,
   TProjectUpdateInput,
 } from '@/types/projectType';
-import { sendInvEmail } from '@/services/emailService';
+import { sendInvMemberEmail, sendInvOwnerEmail } from '@/services/emailService';
 import { decodeInvMemberToken } from '@/services/tokenService';
 import { PROJECT_ERR_MES, USER_ERR_MES } from '@/common/errorMessages';
 import {
@@ -108,7 +108,7 @@ export const inviteMember = asyncErrorHandler(
     const responceObj: { isEmailSent?: boolean; invToken?: string } = {};
     if (NODE_ENV !== 'test') {
       const invUrl = `http://${req.headers.host}/projects/${projectId}/member/${invToken}`;
-      const emailResult = await sendInvEmail({ email, invUrl, title: project.title });
+      const emailResult = await sendInvMemberEmail({ email, invUrl, title: project.title });
       responceObj.isEmailSent = !!emailResult;
     } else {
       responceObj.invToken = invToken;
@@ -156,3 +156,32 @@ export const deleteMember = asyncErrorHandler(async (req: Request, res: Response
   await project.save();
   res.json(project);
 });
+
+export const inviteOwner = asyncErrorHandler(
+  async (req: Request<Record<string, string>, {}, TProjectInviteUserInput>, res: Response) => {
+    validationErrorHandler(req);
+    const ownerId = req.userId;
+    const projectId = req.params.id;
+    const email = req.body.email;
+    const [project, invitedUser] = await Promise.all([
+      Project.findOne({ _id: projectId, ownerRef: ownerId }),
+      User.findOne({ email }),
+    ]);
+    if (!project) {
+      throw new NotFoundError(PROJECT_ERR_MES.NOT_FOUND_OR_NO_ACCESS);
+    }
+    if (!invitedUser || !invitedUser?.isVerified) {
+      throw new NotFoundError(USER_ERR_MES.NOT_FOUND_OR_NOT_VERIFIED);
+    }
+    const invToken = await project.generateOwnerToken(invitedUser._id.toString());
+    const responceObj: { isEmailSent?: boolean; invToken?: string } = {};
+    if (NODE_ENV !== 'test') {
+      const invUrl = `http://${req.headers.host}/projects/${projectId}/owner/${invToken}`;
+      const emailResult = await sendInvOwnerEmail({ email, invUrl, title: project.title });
+      responceObj.isEmailSent = !!emailResult;
+    } else {
+      responceObj.invToken = invToken;
+    }
+    res.status(StatusCodes.CREATED).json(responceObj);
+  }
+);
