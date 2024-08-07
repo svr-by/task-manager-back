@@ -9,7 +9,7 @@ const {
   JWT_EXPIRE_TIME,
   JWT_REFRESH_SECRET_KEY,
   JWT_REFRESH_EXPIRE_TIME,
-  JWT_INVITE_SECRET_KEY,
+  JWT_INVITE_MEMBER_SECRET_KEY,
   JWT_INVITE_EXPIRE_TIME,
 } = config;
 
@@ -50,10 +50,10 @@ export const decodeRfrToken = (token: string, options?: jwt.VerifyOptions) => {
   return decodeToken(token, JWT_REFRESH_SECRET_KEY, options);
 };
 
-export const getInvToken = (payload: TTknPayload) => {
-  return getToken(payload, JWT_INVITE_SECRET_KEY, JWT_INVITE_EXPIRE_TIME);
+export const getInvMemberToken = (payload: TTknPayload) => {
+  return getToken(payload, JWT_INVITE_MEMBER_SECRET_KEY, JWT_INVITE_EXPIRE_TIME);
 };
 
-export const decodeInvToken = (token: string, options?: jwt.VerifyOptions) => {
-  return decodeToken(token, JWT_INVITE_SECRET_KEY, options);
+export const decodeInvMemberToken = (token: string, options?: jwt.VerifyOptions) => {
+  return decodeToken(token, JWT_INVITE_MEMBER_SECRET_KEY, options);
 };

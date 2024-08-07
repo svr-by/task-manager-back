@@ -8,7 +8,7 @@ import {
   TProjectUpdateInput,
 } from '@/types/projectType';
 import { sendInvEmail } from '@/services/emailService';
-import { decodeInvToken } from '@/services/tokenService';
+import { decodeInvMemberToken } from '@/services/tokenService';
 import { PROJECT_ERR_MES, USER_ERR_MES } from '@/common/errorMessages';
 import {
   EntityExistsError,
@@ -88,7 +88,7 @@ export const deleteProject = asyncErrorHandler(async (req: Request, res: Respons
   res.status(StatusCodes.NO_CONTENT);
 });
 
-export const inviteUser = asyncErrorHandler(
+export const inviteMember = asyncErrorHandler(
   async (req: Request<Record<string, string>, {}, TProjectInviteUserInput>, res: Response) => {
     validationErrorHandler(req);
     const projectId = req.params.id;
@@ -104,10 +104,10 @@ export const inviteUser = asyncErrorHandler(
     if (!invitedUser || !invitedUser.isVerified) {
       throw new NotFoundError(USER_ERR_MES.NOT_FOUND_OR_NOT_VERIFIED);
     }
-    const invToken = await project.generateToken(invitedUser._id.toString());
+    const invToken = await project.generateMemberToken(invitedUser._id.toString());
     const responceObj: { isEmailSent?: boolean; invToken?: string } = {};
     if (NODE_ENV !== 'test') {
-      const invUrl = `http://${req.headers.host}/projects/${projectId}/join/${invToken}`;
+      const invUrl = `http://${req.headers.host}/projects/${projectId}/member/${invToken}`;
       const emailResult = await sendInvEmail({ email, invUrl, title: project.title });
       responceObj.isEmailSent = !!emailResult;
     } else {
@@ -117,12 +117,12 @@ export const inviteUser = asyncErrorHandler(
   }
 );
 
-export const joinProject = asyncErrorHandler(async (req: Request, res: Response) => {
+export const becomeMember = asyncErrorHandler(async (req: Request, res: Response) => {
   validationErrorHandler(req);
   const userId = req.userId;
   const projectId = req.params.id;
   const invToken = req.params.token;
-  const decodedInvTkn = decodeInvToken(invToken);
+  const decodedInvTkn = decodeInvMemberToken(invToken);
   if (!decodedInvTkn) {
     throw new BadRequestError(PROJECT_ERR_MES.INV_TKN_EXPIRED);
   }

@@ -17,6 +17,6 @@ export const validateUpdateProjectParams = () => [
   validateBodyDesc().optional(),
 ];
 
-export const validateInviteProjectParams = () => [validateParamId(), validateBodyEmail()];
+export const validateInviteUserParams = () => [validateParamId(), validateBodyEmail()];
 
-export const validateJoinProjectParams = () => [validateParamId(), validateParamToken()];
+export const validateAcceptInvitationParams = () => [validateParamId(), validateParamToken()];

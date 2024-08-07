@@ -1,7 +1,7 @@
 import { Schema, model } from 'mongoose';
 
 import { IProject, IProjectModel, IProjectMethods } from '@/types/projectType';
-import { getInvToken, decodeInvToken } from '@/services/tokenService';
+import { getInvMemberToken, decodeInvMemberToken } from '@/services/tokenService';
 import { COLLECTIONS, MODEL_NAME } from '@/common/enums';
 
 const projectScheme = new Schema<IProject, IProjectModel, IProjectMethods>(
@@ -36,8 +36,8 @@ projectScheme.method(
   }
 );
 
-projectScheme.method('generateToken', async function (userId: string) {
-  const invToken = getInvToken({ uid: userId });
+projectScheme.method('generateMemberToken', async function (userId: string) {
+  const invToken = getInvMemberToken({ uid: userId });
   if (invToken) {
     this.tokens.push(invToken);
     await this.save();
@@ -46,7 +46,7 @@ projectScheme.method('generateToken', async function (userId: string) {
 });
 
 projectScheme.method('filterTokens', function (excessToken: string) {
-  this.tokens = this.tokens.filter((token) => token !== excessToken && decodeInvToken(token));
+  this.tokens = this.tokens.filter((token) => token !== excessToken && decodeInvMemberToken(token));
 });
 
 export default model<IProject, IProjectModel>(MODEL_NAME.PROJECT, projectScheme);
