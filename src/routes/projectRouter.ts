@@ -16,6 +16,7 @@ import {
   becomeMember,
   deleteMember,
   inviteOwner,
+  becomeOwner,
 } from '@/controllers/projectController';
 import { validateParamId } from '@/validators/commonValidator';
 
@@ -30,5 +31,6 @@ projectsRouter.post('/:id/member', validateInviteUserParams(), inviteMember);
 projectsRouter.get('/:id/member/:token', validateAcceptInvitationParams(), becomeMember);
 projectsRouter.delete('/:id/member/:userId', validateDeleteMemberParams(), deleteMember);
 projectsRouter.post('/:id/owner', validateInviteUserParams(), inviteOwner);
+projectsRouter.get('/:id/owner/:token', validateAcceptInvitationParams(), becomeOwner);
 
 export default projectsRouter;

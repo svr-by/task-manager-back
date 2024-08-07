@@ -40,6 +40,6 @@ export enum PROJECT_ERR_MES {
   NO_ACCESS = 'Access to the project not provided',
   NOT_FOUND_OR_NO_ACCESS = 'Project not found or access denied',
   INV_TKN_EXPIRED = 'Invitation token is not valid or expired',
-  INV_TKN_INVALID = 'Invalid invitation token',
+  INV_TKN_INCORRECT = 'Incorrect invite token',
   MEMBER_NOT_FOUND = 'Member not found',
 }

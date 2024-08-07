@@ -8,7 +8,7 @@ import {
   TProjectUpdateInput,
 } from '@/types/projectType';
 import { sendInvMemberEmail, sendInvOwnerEmail } from '@/services/emailService';
-import { decodeInvMemberToken } from '@/services/tokenService';
+import { decodeInvMemberToken, decodeInvOwnerToken } from '@/services/tokenService';
 import { PROJECT_ERR_MES, USER_ERR_MES } from '@/common/errorMessages';
 import {
   EntityExistsError,
@@ -131,12 +131,12 @@ export const becomeMember = asyncErrorHandler(async (req: Request, res: Response
     throw new NotFoundError(PROJECT_ERR_MES.NOT_FOUND);
   }
   if (!project.tokens?.includes(invToken) || decodedInvTkn.uid !== userId) {
-    throw new ForbiddenError(PROJECT_ERR_MES.INV_TKN_INVALID);
+    throw new ForbiddenError(PROJECT_ERR_MES.INV_TKN_INCORRECT);
   }
   project.filterTokens(invToken);
   project.membersRef.push(createDbId(userId));
   await project.save();
-  res.send('Participation in the project confirmed');
+  res.send('Project member has been added');
 });
 
 export const deleteMember = asyncErrorHandler(async (req: Request, res: Response) => {
@@ -185,3 +185,26 @@ export const inviteOwner = asyncErrorHandler(
     res.status(StatusCodes.CREATED).json(responceObj);
   }
 );
+
+export const becomeOwner = asyncErrorHandler(async (req: Request, res: Response) => {
+  validationErrorHandler(req);
+  const userId = req.userId;
+  const projectId = req.params.id;
+  const invToken = req.params.token;
+  const decodedInvTkn = decodeInvOwnerToken(invToken);
+  if (!decodedInvTkn) {
+    throw new BadRequestError(PROJECT_ERR_MES.INV_TKN_EXPIRED);
+  }
+  const project = await Project.findById(projectId);
+  if (!project) {
+    throw new NotFoundError(PROJECT_ERR_MES.NOT_FOUND);
+  }
+  if (!project.tokens?.includes(invToken) || decodedInvTkn.uid !== userId) {
+    throw new ForbiddenError(PROJECT_ERR_MES.INV_TKN_INCORRECT);
+  }
+  project.filterTokens(invToken);
+  project.membersRef.push(project.ownerRef);
+  project.ownerRef = createDbId(userId);
+  await project.save();
+  res.send('Project owner has been changed');
+});
