@@ -11,6 +11,7 @@ import {
   updateProject,
   deleteProject,
   inviteUser,
+  joinProject,
 } from '@/controllers/projectController';
 import { validateParamId } from '@/validators/commonValidator';
 
@@ -22,5 +23,6 @@ projectsRouter.get('/:id', validateParamId(), getProject);
 projectsRouter.put('/:id', validateUpdateProjectParams(), updateProject);
 projectsRouter.delete('/:id', validateParamId(), deleteProject);
 projectsRouter.post('/:id/invite', validateInviteProjectParams(), inviteUser);
+projectsRouter.get('/:id/join/:token', joinProject);
 
 export default projectsRouter;

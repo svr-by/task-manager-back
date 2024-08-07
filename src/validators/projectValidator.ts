@@ -1,7 +1,8 @@
 import {
+  validateParamId,
+  validateParamToken,
   validateBodyTitle,
   validateBodyDesc,
-  validateParamId,
   validateBodyEmail,
 } from './commonValidator';
 
@@ -17,3 +18,5 @@ export const validateUpdateProjectParams = () => [
 ];
 
 export const validateInviteProjectParams = () => [validateParamId(), validateBodyEmail()];
+
+export const validateJoinProjectParams = () => [validateParamId(), validateParamToken()];

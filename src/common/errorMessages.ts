@@ -6,6 +6,8 @@ export enum COMMON_ERR_MES {
   TITLE_CHARS = 'Title chars is not valid',
   DESC_STRING = 'Description must be string',
   DESC_LENGTH = 'Description length is not valid',
+  TOKEN_STRING = 'Token must be string',
+  TOKEN_EMPTY = 'Token must not be empty',
 }
 
 export enum USER_ERR_MES {
@@ -27,6 +29,7 @@ export enum USER_ERR_MES {
   PWD_LENGTH = 'Password length is not valid',
   NOT_CONFIRMED = 'User has not confirmed the email',
   NOT_FOUND = 'User not found',
+  NOT_FOUND_OR_NOT_VERIFIED = 'User not found or not verified',
   ACCESS_DENIED = 'Access to change other users is denied',
 }
 
@@ -35,4 +38,6 @@ export enum PROJECT_ERR_MES {
   NOT_FOUND = 'Project not found',
   NO_ACCESS = 'Access to the project not provided',
   NOT_FOUND_OR_NO_ACCESS = 'Project not found or access denied',
+  INV_TKN_EXPIRED = 'Invitation token is not valid or expired',
+  INV_TKN_INVALID = 'Invalid invitation token',
 }

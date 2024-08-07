@@ -8,11 +8,18 @@ import {
   TProjectUpdateInput,
 } from '@/types/projectType';
 import { sendInvEmail } from '@/services/emailService';
+import { decodeInvToken } from '@/services/tokenService';
 import { PROJECT_ERR_MES, USER_ERR_MES } from '@/common/errorMessages';
-import { EntityExistsError, NotFoundError, ForbiddenError } from '@/common/appError';
+import {
+  EntityExistsError,
+  NotFoundError,
+  ForbiddenError,
+  BadRequestError,
+} from '@/common/appError';
 import config from '@/common/config';
 import Project from '@/models/projectModel';
 import User from '@/models/userModel';
+import { createDbId } from '@/services/databaseService';
 
 const { NODE_ENV } = config;
 
@@ -94,8 +101,8 @@ export const inviteUser = asyncErrorHandler(
     if (!project) {
       throw new NotFoundError(PROJECT_ERR_MES.NOT_FOUND_OR_NO_ACCESS);
     }
-    if (!invitedUser) {
-      throw new NotFoundError(USER_ERR_MES.NOT_FOUND);
+    if (!invitedUser || !invitedUser.isVerified) {
+      throw new NotFoundError(USER_ERR_MES.NOT_FOUND_OR_NOT_VERIFIED);
     }
     const invToken = await project.generateToken(invitedUser._id.toString());
     const responceObj: { isEmailSent?: boolean; invToken?: string } = {};
@@ -109,3 +116,25 @@ export const inviteUser = asyncErrorHandler(
     res.status(StatusCodes.CREATED).json(responceObj);
   }
 );
+
+export const joinProject = asyncErrorHandler(async (req: Request, res: Response) => {
+  validationErrorHandler(req);
+  const userId = req.userId;
+  const projectId = req.params.id;
+  const invToken = req.params.token;
+  const decodedInvTkn = decodeInvToken(invToken);
+  if (!decodedInvTkn) {
+    throw new BadRequestError(PROJECT_ERR_MES.INV_TKN_EXPIRED);
+  }
+  const project = await Project.findById(projectId);
+  if (!project) {
+    throw new NotFoundError(PROJECT_ERR_MES.NOT_FOUND);
+  }
+  if (!project.tokens?.includes(invToken) || decodedInvTkn.uid !== userId) {
+    throw new ForbiddenError(PROJECT_ERR_MES.INV_TKN_INVALID);
+  }
+  project.filterTokens(invToken);
+  project.membersRef.push(createDbId(userId));
+  await project.save();
+  res.send('Participation in the project confirmed');
+});

@@ -8,6 +8,14 @@ const { MIN_PASSWORD_LENGTH, MAX_PASSWORD_LENGTH } = config;
 export const validateParamId = () =>
   param('id').isMongoId().withMessage(COMMON_ERR_MES.DB_ID_INVALID);
 
+export const validateParamToken = () =>
+  param('token')
+    .isString()
+    .withMessage(COMMON_ERR_MES.TOKEN_STRING)
+    .trim()
+    .notEmpty()
+    .withMessage(COMMON_ERR_MES.TOKEN_EMPTY);
+
 export const validateBodyName = () =>
   body('name')
     .isString()
