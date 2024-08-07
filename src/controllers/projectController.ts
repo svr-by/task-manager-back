@@ -85,7 +85,7 @@ export const deleteProject = asyncErrorHandler(async (req: Request, res: Respons
     throw new NotFoundError(PROJECT_ERR_MES.NOT_FOUND_OR_NO_ACCESS);
   }
   //TODO: delete columns and tasks of the project
-  res.status(StatusCodes.NO_CONTENT);
+  res.sendStatus(StatusCodes.NO_CONTENT);
 });
 
 export const inviteMember = asyncErrorHandler(

@@ -100,7 +100,7 @@ describe('TESTS: user actions', () => {
       .set('Accept', 'application/json')
       .set('Authorization', `Bearer ${userAccessToken}`);
     expect(response.status, url).to.equal(400);
-    expect(response.text, url).to.equal(COMMON_ERR_MES.DB_ID_INVALID);
+    expect(response.text, url).to.equal(COMMON_ERR_MES.ID_INVALID);
 
     url = `/users/${NON_EXISTING_ID}`;
     response = await supertest(app)
