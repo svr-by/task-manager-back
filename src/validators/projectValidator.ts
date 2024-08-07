@@ -1,6 +1,7 @@
 import {
   validateParamId,
   validateParamToken,
+  validateParamUserId,
   validateBodyTitle,
   validateBodyDesc,
   validateBodyEmail,
@@ -20,3 +21,5 @@ export const validateUpdateProjectParams = () => [
 export const validateInviteUserParams = () => [validateParamId(), validateBodyEmail()];
 
 export const validateAcceptInvitationParams = () => [validateParamId(), validateParamToken()];
+
+export const validateDeleteMemberParams = () => [validateParamId(), validateParamUserId()];

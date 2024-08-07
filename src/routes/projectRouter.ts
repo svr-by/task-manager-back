@@ -4,6 +4,7 @@ import {
   validateUpdateProjectParams,
   validateInviteUserParams,
   validateAcceptInvitationParams,
+  validateDeleteMemberParams,
 } from '@/validators/projectValidator';
 import {
   createProject,
@@ -13,6 +14,7 @@ import {
   deleteProject,
   inviteMember,
   becomeMember,
+  deleteMember,
 } from '@/controllers/projectController';
 import { validateParamId } from '@/validators/commonValidator';
 
@@ -25,5 +27,6 @@ projectsRouter.put('/:id', validateUpdateProjectParams(), updateProject);
 projectsRouter.delete('/:id', validateParamId(), deleteProject);
 projectsRouter.post('/:id/member', validateInviteUserParams(), inviteMember);
 projectsRouter.get('/:id/member/:token', validateAcceptInvitationParams(), becomeMember);
+projectsRouter.delete('/:id/member/:userId', validateDeleteMemberParams(), deleteMember);
 
 export default projectsRouter;

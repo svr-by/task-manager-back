@@ -138,3 +138,21 @@ export const becomeMember = asyncErrorHandler(async (req: Request, res: Response
   await project.save();
   res.send('Participation in the project confirmed');
 });
+
+export const deleteMember = asyncErrorHandler(async (req: Request, res: Response) => {
+  validationErrorHandler(req);
+  const ownerId = req.userId;
+  const projectId = req.params.id;
+  const memberId = req.params.userId;
+  const project = await Project.findOne({ _id: projectId, ownerRef: ownerId });
+  if (!project) {
+    throw new NotFoundError(PROJECT_ERR_MES.NOT_FOUND_OR_NO_ACCESS);
+  }
+  const memberIndex = project.membersRef.findIndex((member) => member.toString() === memberId);
+  if (memberIndex === -1) {
+    throw new NotFoundError(PROJECT_ERR_MES.MEMBER_NOT_FOUND);
+  }
+  project.membersRef.splice(memberIndex, 1);
+  await project.save();
+  res.json(project);
+});

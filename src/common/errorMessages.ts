@@ -1,6 +1,7 @@
 export enum COMMON_ERR_MES {
   DB_ERROR = 'Database access error',
-  DB_ID_INVALID = 'Invalid database document ID',
+  ID_INVALID = 'ID param must be database document',
+  USER_ID_INVALID = 'User ID param must be database document',
   TITLE_STRING = 'Title must be string',
   TITLE_LENGTH = 'Title length is not valid',
   TITLE_CHARS = 'Title chars is not valid',
@@ -40,4 +41,5 @@ export enum PROJECT_ERR_MES {
   NOT_FOUND_OR_NO_ACCESS = 'Project not found or access denied',
   INV_TKN_EXPIRED = 'Invitation token is not valid or expired',
   INV_TKN_INVALID = 'Invalid invitation token',
+  MEMBER_NOT_FOUND = 'Member not found',
 }

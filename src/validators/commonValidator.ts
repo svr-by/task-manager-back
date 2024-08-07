@@ -5,8 +5,10 @@ import config from '@/common/config';
 
 const { MIN_PASSWORD_LENGTH, MAX_PASSWORD_LENGTH } = config;
 
-export const validateParamId = () =>
-  param('id').isMongoId().withMessage(COMMON_ERR_MES.DB_ID_INVALID);
+export const validateParamId = () => param('id').isMongoId().withMessage(COMMON_ERR_MES.ID_INVALID);
+
+export const validateParamUserId = () =>
+  param('userId').isMongoId().withMessage(COMMON_ERR_MES.USER_ID_INVALID);
 
 export const validateParamToken = () =>
   param('token')
