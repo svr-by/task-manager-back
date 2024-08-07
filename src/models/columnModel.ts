@@ -35,4 +35,4 @@ columnScheme.method('checkUserAccess', async function (userId) {
   return hasAccess;
 });
 
-export default model<IColumn, IColumnMethods>(MODEL_NAME.COLUMN, columnScheme);
+export default model<IColumn, IColumnModel>(MODEL_NAME.COLUMN, columnScheme);

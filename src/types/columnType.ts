@@ -13,3 +13,5 @@ export interface IColumnMethods {
 }
 
 export interface IColumnModel extends Model<IColumn, {}, IColumnMethods> {}
+
+export type TColumnCreateInput = Pick<IColumn, 'title' | 'order'> & { projectId: string };
