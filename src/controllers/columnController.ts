@@ -4,7 +4,7 @@ import { StatusCodes } from 'http-status-codes';
 import { asyncErrorHandler, validationErrorHandler } from '@/services/errorService';
 import { EntityExistsError, NotFoundError, ForbiddenError } from '@/common/appError';
 import { COLUMN_ERR_MES, PROJECT_ERR_MES } from '@/common/errorMessages';
-import { TColumnCreateInput } from '@/types/columnType';
+import { TColumnCreateInput, TColumnUpdateInput } from '@/types/columnType';
 import config from '@/common/config';
 import Project from '@/models/projectModel';
 import Column from '@/models/columnModel';
@@ -53,3 +53,33 @@ export const getColumn = asyncErrorHandler(async (req: Request, res: Response) =
   }
   res.json(column);
 });
+
+export const updateColumn = asyncErrorHandler(
+  async (req: Request<Record<string, string>, {}, TColumnUpdateInput>, res: Response) => {
+    validationErrorHandler(req);
+    const columnId = req.params.id;
+    const column = await Column.findById(columnId);
+    if (!column) {
+      throw new NotFoundError(COLUMN_ERR_MES.NOT_FOUND);
+    }
+    const projectId = column.projectRef.toString();
+    const userId = req.userId;
+    const { title } = req.body;
+    const [hasAccess, duplColumn] = await Promise.all([
+      column.checkUserAccess(userId),
+      Column.findOne({ projectRef: projectId, title }),
+    ]);
+    if (!hasAccess) {
+      throw new ForbiddenError(PROJECT_ERR_MES.NO_ACCESS);
+    }
+    if (duplColumn) {
+      throw new EntityExistsError(COLUMN_ERR_MES.TITLE_EXIST);
+    }
+    const updatedColumn = await Column.findOneAndUpdate(
+      { _id: columnId },
+      { title },
+      { new: true }
+    );
+    res.json(updatedColumn);
+  }
+);
