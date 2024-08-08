@@ -131,3 +131,20 @@ export const updateColumnSet = asyncErrorHandler(
     res.json(columnsBuffer);
   }
 );
+
+export const deleteColumn = asyncErrorHandler(async (req, res) => {
+  validationErrorHandler(req);
+  const columnId = req.params.id;
+  const column = await Column.findById(columnId);
+  if (!column) {
+    throw new NotFoundError(COLUMN_ERR_MES.NOT_FOUND);
+  }
+  const userId = req.userId;
+  const hasAccess = await column.checkUserAccess(userId);
+  if (!hasAccess) {
+    throw new ForbiddenError(PROJECT_ERR_MES.NO_ACCESS);
+  }
+  await Column.findByIdAndDelete(columnId);
+  //TODO: delete tasks of the column
+  res.sendStatus(StatusCodes.NO_CONTENT);
+});
