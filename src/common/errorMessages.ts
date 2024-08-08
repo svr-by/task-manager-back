@@ -39,7 +39,7 @@ export enum USER_ERR_MES {
 export enum PROJECT_ERR_MES {
   TITLE_EXIST = 'Project with this title already exists',
   NOT_FOUND = 'Project not found',
-  NO_ACCESS = 'Access to the project not provided',
+  NO_ACCESS = 'Access to the project is denied',
   NOT_FOUND_OR_NO_ACCESS = 'Project not found or access denied',
   INV_TKN_EXPIRED = 'Invitation token is not valid or expired',
   INV_TKN_INCORRECT = 'Incorrect invite token',

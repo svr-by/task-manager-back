@@ -3,11 +3,11 @@ import { StatusCodes } from 'http-status-codes';
 
 import { asyncErrorHandler, validationErrorHandler } from '@/services/errorService';
 import { EntityExistsError, NotFoundError, ForbiddenError } from '@/common/appError';
+import { COLUMN_ERR_MES, PROJECT_ERR_MES } from '@/common/errorMessages';
 import { TColumnCreateInput } from '@/types/columnType';
 import config from '@/common/config';
 import Project from '@/models/projectModel';
 import Column from '@/models/columnModel';
-import { COLUMN_ERR_MES, PROJECT_ERR_MES } from '@/common/errorMessages';
 
 const { MAX_COLUMN_NUMBER_PER_PROJECT } = config;
 
@@ -38,3 +38,18 @@ export const createColumn = asyncErrorHandler(
     res.status(StatusCodes.CREATED).json(newColumn);
   }
 );
+
+export const getColumn = asyncErrorHandler(async (req: Request, res: Response) => {
+  validationErrorHandler(req);
+  const columnId = req.params.id;
+  const column = await Column.findById(columnId);
+  if (!column) {
+    throw new NotFoundError(COLUMN_ERR_MES.NOT_FOUND);
+  }
+  const userId = req.userId;
+  const hasAccess = await column.checkUserAccess(userId);
+  if (!hasAccess) {
+    throw new ForbiddenError(PROJECT_ERR_MES.NO_ACCESS);
+  }
+  res.json(column);
+});

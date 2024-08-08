@@ -28,10 +28,9 @@ const columnScheme = new Schema<IColumn, IColumnModel, IColumnMethods>(
 );
 
 columnScheme.method('checkUserAccess', async function (userId) {
-  const projectRef = this.projectRef;
   await this.populate('projectRef');
   const hasAccess = !!(this.projectRef as IProjectMethods)?.checkUserAccess(userId);
-  this.projectRef = projectRef;
+  this.depopulate('projectRef');
   return hasAccess;
 });
 

@@ -9,7 +9,7 @@ export interface IColumn extends Document {
 }
 
 export interface IColumnMethods {
-  checkUserAccess: (userId: string) => boolean;
+  checkUserAccess: (userId: string) => Promise<boolean>;
 }
 
 export interface IColumnModel extends Model<IColumn, {}, IColumnMethods> {}
