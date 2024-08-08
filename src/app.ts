@@ -10,6 +10,7 @@ import swaggerDocument from '@/common/swagger.json';
 import authRouter from '@/routes/authRouter';
 import userRouter from '@/routes/userRouter';
 import projectRouter from '@/routes/projectRouter';
+import columnRouter from '@/routes/columnRouter';
 
 const app = express();
 
@@ -21,6 +22,7 @@ app.use('/auth', authRouter);
 app.use(verifyToken);
 app.use('/users', userRouter);
 app.use('/projects', projectRouter);
+app.use('/columns', columnRouter);
 app.use(errorHandler);
 app.get('*', (req, res) => {
   res.sendStatus(StatusCodes.NOT_FOUND);

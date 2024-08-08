@@ -62,3 +62,9 @@ export const validateBodyDesc = () =>
     .trim()
     .isLength({ max: 100 })
     .withMessage(COMMON_ERR_MES.DESC_LENGTH);
+
+export const validateBodyProjectId = () =>
+  body('projectId').isMongoId().withMessage(COMMON_ERR_MES.PROJECT_ID_INVALID);
+
+export const validateBodyOrder = () =>
+  body('order').isFloat({ min: 0 }).withMessage(COMMON_ERR_MES.ORDER_VALUE);

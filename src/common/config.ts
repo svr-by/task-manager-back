@@ -22,6 +22,7 @@ const config = {
   AUTH_EMAIL_USERNAME: process.env.AUTH_EMAIL_USERNAME,
   AUTH_EMAIL_PASSWORD: process.env.AUTH_EMAIL_PASSWORD,
   EMAIL_FROM: process.env.EMAIL_FROM,
+  MAX_COLUMN_NUMBER_PER_PROJECT: 20,
 };
 
 export default config;
