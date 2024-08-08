@@ -17,3 +17,5 @@ export interface IColumnModel extends Model<IColumn, {}, IColumnMethods> {}
 export type TColumnCreateInput = Pick<IColumn, 'title' | 'order'> & { projectId: string };
 
 export type TColumnUpdateInput = Pick<IColumn, 'title'>;
+
+export type TColumnUpdateSetInput = { id: string; order: number }[];

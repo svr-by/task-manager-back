@@ -2,9 +2,19 @@ import { Response, Request } from 'express';
 import { StatusCodes } from 'http-status-codes';
 
 import { asyncErrorHandler, validationErrorHandler } from '@/services/errorService';
-import { EntityExistsError, NotFoundError, ForbiddenError } from '@/common/appError';
 import { COLUMN_ERR_MES, PROJECT_ERR_MES } from '@/common/errorMessages';
-import { TColumnCreateInput, TColumnUpdateInput } from '@/types/columnType';
+import {
+  EntityExistsError,
+  NotFoundError,
+  ForbiddenError,
+  BadRequestError,
+} from '@/common/appError';
+import {
+  IColumn,
+  TColumnCreateInput,
+  TColumnUpdateInput,
+  TColumnUpdateSetInput,
+} from '@/types/columnType';
 import config from '@/common/config';
 import Project from '@/models/projectModel';
 import Column from '@/models/columnModel';
@@ -81,5 +91,43 @@ export const updateColumn = asyncErrorHandler(
       { new: true }
     );
     res.json(updatedColumn);
+  }
+);
+
+export const updateColumnSet = asyncErrorHandler(
+  async (req: Request<Record<string, string>, {}, TColumnUpdateSetInput>, res: Response) => {
+    validationErrorHandler(req);
+    const userId = req.userId;
+    const update = req.body;
+    const columnsBuffer: IColumn[] = [];
+    let projectId;
+    for (const updatedColumn of update) {
+      const { id, order } = updatedColumn;
+      const duplColumn = columnsBuffer.find(
+        (column) => column._id.toString() === id || column.order === order
+      );
+      if (duplColumn) {
+        throw new BadRequestError(COLUMN_ERR_MES.UPDATE_REPEATED);
+      }
+      const column = await Column.findById(id);
+      if (!column) {
+        throw new NotFoundError(COLUMN_ERR_MES.NOT_FOUND);
+      }
+      if (!projectId) {
+        projectId = column.projectRef.toString();
+        const hasAccess = await column.checkUserAccess(userId);
+        if (!hasAccess) {
+          throw new ForbiddenError(PROJECT_ERR_MES.NO_ACCESS);
+        }
+      } else if (column.projectRef.toString() !== projectId) {
+        throw new BadRequestError(COLUMN_ERR_MES.SAME_PROJECT);
+      }
+      if (column.order !== order) {
+        column.order = order;
+        columnsBuffer.push(column);
+      }
+    }
+    await Promise.all(columnsBuffer.map((column) => column.save()));
+    res.json(columnsBuffer);
   }
 );

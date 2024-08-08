@@ -50,4 +50,10 @@ export enum COLUMN_ERR_MES {
   TITLE_EXIST = 'Column with this title already exists',
   NUMBER_EXCEEDED = 'Maximum number of columns in project exceeded',
   NOT_FOUND = 'Column not found',
+  UPDATE_ARRAY = 'Column update must be an array',
+  UPDATE_OBJECT = 'Column data must be an object',
+  UPDATE_ID = 'Column ID must be database document ID',
+  UPDATE_ORDER = 'Column order must be a positive integer',
+  UPDATE_REPEATED = 'Columns must not be repeated',
+  SAME_PROJECT = 'Columns must belong to the same project',
 }
