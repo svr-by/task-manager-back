@@ -1,4 +1,5 @@
 import { Response, Request } from 'express';
+import { Types } from 'mongoose';
 import { StatusCodes } from 'http-status-codes';
 
 import { ITask, TTaskCreateInput, TTaskUpdateInput, TTaskSetUpdateInput } from '@/types/taskType';
@@ -206,4 +207,21 @@ export const deleteTask = asyncErrorHandler(async (req: Request, res: Response) 
     });
   }
   res.sendStatus(StatusCodes.NO_CONTENT);
+});
+
+export const subscribeTask = asyncErrorHandler(async (req: Request, res: Response) => {
+  validationErrorHandler(req);
+  const taskId = req.params.id;
+  const task = await Task.findById(taskId);
+  if (!task) {
+    throw new NotFoundError(TASK_ERR_MES.NOT_FOUND);
+  }
+  const userId = req.userId;
+  const hasAccess = await task.checkUserAccess(userId);
+  if (!hasAccess) {
+    throw new ForbiddenError(PROJECT_ERR_MES.NO_ACCESS);
+  }
+  (task.subscriberRefs as Types.ObjectId[]).push(createDbId(userId));
+  await task.save();
+  res.sendStatus(StatusCodes.OK);
 });

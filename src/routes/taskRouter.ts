@@ -11,6 +11,7 @@ import {
   updateTask,
   updateTaskSet,
   deleteTask,
+  subscribeTask,
 } from '@/controllers/taskController';
 
 const taskRouter = express.Router();
@@ -20,5 +21,6 @@ taskRouter.patch('/', validateUpdateTaskSetParams(), updateTaskSet);
 taskRouter.get('/:id', validateParamId(), getTask);
 taskRouter.put('/:id', validateUpdateTaskParams(), updateTask);
 taskRouter.delete('/:id', validateParamId(), deleteTask);
+taskRouter.put('/:id/subscribe', validateParamId(), subscribeTask);
 
 export default taskRouter;
