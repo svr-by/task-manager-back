@@ -57,3 +57,21 @@ export const createTask = asyncErrorHandler(
     res.status(StatusCodes.CREATED).json(newTask);
   }
 );
+
+export const getTask = asyncErrorHandler(async (req: Request, res: Response) => {
+  validationErrorHandler(req);
+  const taskId = req.params.id;
+  const task = await Task.findById(taskId)
+    .populate('assigneeRef', 'name email')
+    .populate('subscriberRefs', 'name email');
+
+  if (!task) {
+    throw new NotFoundError(TASK_ERR_MES.NOT_FOUND);
+  }
+  const userId = req.userId;
+  const hasAccess = await task.checkUserAccess(userId);
+  if (!hasAccess) {
+    throw new ForbiddenError(PROJECT_ERR_MES.NO_ACCESS);
+  }
+  res.json(task);
+});
