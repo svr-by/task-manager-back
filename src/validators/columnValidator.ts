@@ -18,6 +18,6 @@ export const validateUpdateColumnParams = () => [validateParamId(), validateBody
 export const validateUpdateColumnSetParams = () => [
   body().isArray({ min: 1 }).withMessage(COLUMN_ERR_MES.UPDATE_ARRAY),
   body('*').isObject().withMessage(COLUMN_ERR_MES.UPDATE_OBJECT),
-  body('*.id').isMongoId().withMessage(COLUMN_ERR_MES.UPDATE_ID),
+  body('*.id').isMongoId().withMessage(COLUMN_ERR_MES.ID_INVALID),
   body('*.order').isInt({ min: 0 }).withMessage(COLUMN_ERR_MES.UPDATE_ORDER),
 ];

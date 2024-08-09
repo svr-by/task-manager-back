@@ -42,7 +42,7 @@ export const createColumn = asyncErrorHandler(
       throw new ForbiddenError(COLUMN_ERR_MES.NUMBER_EXCEEDED);
     }
     if (duplColumn) {
-      throw new EntityExistsError(COLUMN_ERR_MES.TITLE_EXIST);
+      throw new EntityExistsError(COLUMN_ERR_MES.REPEATED);
     }
     const newColumn = await Column.create({ title, projectRef: projectId, order });
     res.status(StatusCodes.CREATED).json(newColumn);
@@ -83,7 +83,7 @@ export const updateColumn = asyncErrorHandler(
       throw new ForbiddenError(PROJECT_ERR_MES.NO_ACCESS);
     }
     if (duplColumn) {
-      throw new EntityExistsError(COLUMN_ERR_MES.TITLE_EXIST);
+      throw new EntityExistsError(COLUMN_ERR_MES.REPEATED);
     }
     const updatedColumn = await Column.findOneAndUpdate(
       { _id: columnId },

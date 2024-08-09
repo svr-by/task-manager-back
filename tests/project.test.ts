@@ -246,7 +246,7 @@ describe('TESTS: project actions', () => {
         title: 'Project 1',
       });
     expect(response.status, url).to.equal(409);
-    expect(response.text, url).to.equal(PROJECT_ERR_MES.TITLE_EXIST);
+    expect(response.text, url).to.equal(PROJECT_ERR_MES.REPEATED);
 
     url = `/projects`;
     response = await supertest(app)
@@ -257,7 +257,7 @@ describe('TESTS: project actions', () => {
         title: 'Project 1',
       });
     expect(response.status, url).to.equal(409);
-    expect(response.text, url).to.equal(PROJECT_ERR_MES.TITLE_EXIST);
+    expect(response.text, url).to.equal(PROJECT_ERR_MES.REPEATED);
   });
 
   it('should assign owner of the project', async () => {
