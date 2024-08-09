@@ -225,3 +225,22 @@ export const subscribeTask = asyncErrorHandler(async (req: Request, res: Respons
   await task.save();
   res.sendStatus(StatusCodes.OK);
 });
+
+export const unsubscribeTask = asyncErrorHandler(async (req: Request, res: Response) => {
+  validationErrorHandler(req);
+  const taskId = req.params.id;
+  const task = await Task.findById(taskId);
+  if (!task) {
+    throw new NotFoundError(TASK_ERR_MES.NOT_FOUND);
+  }
+  const userId = req.userId;
+  const hasAccess = await task.checkUserAccess(userId);
+  if (!hasAccess) {
+    throw new ForbiddenError(PROJECT_ERR_MES.NO_ACCESS);
+  }
+  (task.subscriberRefs as Types.ObjectId[]) = (task.subscriberRefs as Types.ObjectId[]).filter(
+    (memberId) => memberId.toString() !== userId
+  );
+  await task.save();
+  res.sendStatus(StatusCodes.NO_CONTENT);
+});
