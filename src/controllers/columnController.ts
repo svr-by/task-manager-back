@@ -13,7 +13,7 @@ import {
   IColumn,
   TColumnCreateInput,
   TColumnUpdateInput,
-  TColumnUpdateSetInput,
+  TColumnSetUpdateInput,
 } from '@/types/columnType';
 import config from '@/common/config';
 import Project from '@/models/projectModel';
@@ -95,7 +95,7 @@ export const updateColumn = asyncErrorHandler(
 );
 
 export const updateColumnSet = asyncErrorHandler(
-  async (req: Request<Record<string, string>, {}, TColumnUpdateSetInput>, res: Response) => {
+  async (req: Request<Record<string, string>, {}, TColumnSetUpdateInput>, res: Response) => {
     validationErrorHandler(req);
     const userId = req.userId;
     const update = req.body;

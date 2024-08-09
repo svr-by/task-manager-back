@@ -1,15 +1,21 @@
 import { Response, Request } from 'express';
 import { StatusCodes } from 'http-status-codes';
 
-import { TTaskCreateInput, TTaskUpdateInput } from '@/types/taskType';
+import { ITask, TTaskCreateInput, TTaskUpdateInput, TTaskSetUpdateInput } from '@/types/taskType';
+import { IUser } from '@/types/userType';
 import { asyncErrorHandler, validationErrorHandler } from '@/services/errorService';
-import { EntityExistsError, NotFoundError, ForbiddenError } from '@/common/appError';
+import { sendUpdateTaskEmail } from '@/services/emailService';
+import { createDbId } from '@/services/databaseService';
+import {
+  EntityExistsError,
+  NotFoundError,
+  ForbiddenError,
+  BadRequestError,
+} from '@/common/appError';
 import { COLUMN_ERR_MES, PROJECT_ERR_MES, TASK_ERR_MES } from '@/common/errorMessages';
 import config from '@/common/config';
 import Column from '@/models/columnModel';
 import Task from '@/models/taskModel';
-import { sendUpdateTaskEmail } from '@/services/emailService';
-import { IUser } from '@/types/userType';
 
 const { NODE_ENV, MAX_TASK_NUMBER_PER_PROJECT } = config;
 
@@ -121,5 +127,59 @@ export const updateTask = asyncErrorHandler(
       });
     }
     res.json(updatedTask);
+  }
+);
+
+export const updateTaskSet = asyncErrorHandler(
+  async (req: Request<Record<string, string>, {}, TTaskSetUpdateInput>, res: Response) => {
+    validationErrorHandler(req);
+    const userId = req.userId;
+    const update = req.body;
+    const tasksBuffer: ITask[] = [];
+    let projectId;
+    for (const updatedTask of update) {
+      const { id, columnId, order } = updatedTask;
+      const duplTask = tasksBuffer.find(
+        (task) =>
+          task._id.toString() === id ||
+          (task.order === order && task.columnRef.toString() === columnId)
+      );
+      if (duplTask) {
+        throw new BadRequestError(TASK_ERR_MES.UPDATE_REPEATED);
+      }
+      const task = await Task.findById(id);
+      if (!task) {
+        throw new NotFoundError(TASK_ERR_MES.NOT_FOUND);
+      }
+      if (!projectId) {
+        projectId = task.projectRef.toString();
+        const hasAccess = await task.checkUserAccess(userId);
+        if (!hasAccess) {
+          throw new ForbiddenError(PROJECT_ERR_MES.NO_ACCESS);
+        }
+      } else if (task.projectRef.toString() !== projectId) {
+        throw new BadRequestError(TASK_ERR_MES.SAME_PROJECT);
+      }
+      if (task.order !== order || task.columnRef.toString() !== columnId) {
+        task.order = order;
+        task.columnRef = createDbId(columnId);
+        tasksBuffer.push(task);
+      }
+    }
+    await Promise.all(tasksBuffer.map((task) => task.save()));
+    if (NODE_ENV !== 'test') {
+      for (const task of tasksBuffer) {
+        await task.populate('assigneeRef subscriberRefs', 'name email');
+        if (task.subscriberRefs.length) {
+          const taskUrl = `http://${req.headers.host}/tasks/${task._id}`;
+          await sendUpdateTaskEmail({
+            subscribers: task.subscriberRefs as IUser[],
+            taskUrl,
+            title: task.title,
+          });
+        }
+      }
+    }
+    res.json(tasksBuffer);
   }
 );

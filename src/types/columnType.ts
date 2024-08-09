@@ -18,4 +18,4 @@ export type TColumnCreateInput = Pick<IColumn, 'title' | 'order'> & { projectId:
 
 export type TColumnUpdateInput = Pick<IColumn, 'title'>;
 
-export type TColumnUpdateSetInput = { id: string; order: number }[];
+export type TColumnSetUpdateInput = { id: string; order: number }[];

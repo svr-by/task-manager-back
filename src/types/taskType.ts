@@ -28,3 +28,5 @@ export type TTaskCreateInput = Pick<ITask, 'title' | 'order' | 'priority' | 'des
 export type TTaskUpdateInput = Partial<Pick<ITask, 'title' | 'priority' | 'description'>> & {
   assigneeId?: string;
 };
+
+export type TTaskSetUpdateInput = { id: string; columnId: string; order: number }[];

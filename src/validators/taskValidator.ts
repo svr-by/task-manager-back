@@ -23,3 +23,11 @@ export const validateUpdateTaskParams = () => [
   body('priority').isInt({ min: 0 }).withMessage(TASK_ERR_MES.PRIORITY_VALUE).optional(),
   validateBodyDesc().optional(),
 ];
+
+export const validateUpdateTaskSetParams = () => [
+  body().isArray({ min: 1 }).withMessage(TASK_ERR_MES.UPDATE_ARRAY),
+  body('*').isObject().withMessage(TASK_ERR_MES.UPDATE_OBJECT),
+  body('*.id').isMongoId().withMessage(TASK_ERR_MES.ID_INVALID),
+  body('*.columnId').isMongoId().withMessage(COLUMN_ERR_MES.ID_INVALID),
+  body('*.order').isInt({ min: 0 }).withMessage(TASK_ERR_MES.UPDATE_ORDER),
+];
