@@ -6,11 +6,11 @@ export interface ITask extends Document {
   title: string;
   projectRef: Types.ObjectId | IProjectMethods;
   columnRef: Types.ObjectId;
-  assigneeRef: Types.ObjectId;
+  assigneeRef?: Types.ObjectId;
   subscriberRefs: Types.ObjectId[];
-  priority: number;
   order: number;
-  description: string;
+  priority?: number;
+  description?: string;
 }
 
 export interface ITaskMethods {
@@ -18,3 +18,8 @@ export interface ITaskMethods {
 }
 
 export interface ITaskModel extends Model<ITask, {}, ITaskMethods> {}
+
+export type TTaskCreateInput = Pick<ITask, 'title' | 'order' | 'priority' | 'description'> & {
+  columnId: string;
+  assigneeId?: string;
+};
