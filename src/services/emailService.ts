@@ -35,6 +35,11 @@ interface ISendUpdateTaskEmail {
   title: string;
 }
 
+interface ISendDeleteTaskEmail {
+  subscribers: { email: string }[];
+  title: string;
+}
+
 export const sendEmail = async ({ email, subject, text, html }: ISendEmail) => {
   const transporter = createTransport({
     host: EMAIL_HOST,
@@ -153,6 +158,21 @@ export const sendUpdateTaskEmail = async ({
     </p>
     <p>
       <a href=${taskUrl} clicktracking=off>${taskUrl}</a>
+    </p>
+  </html>
+  `;
+  return Promise.all(
+    subscribers.map((subs) => sendEmail({ email: subs.email, subject, html: content }))
+  );
+};
+
+export const sendDeleteTaskEmail = async ({ subscribers, title }: ISendDeleteTaskEmail) => {
+  const subject = `Задача "${title}" удалена`;
+  const content = `
+  <html>
+    <h2>Здравствуйте!</h2>
+    <p>Вы получили это письмо потому, что подписаны на задачу <strong>"${title}"</strong>.<br/>
+      Сообщаем, что с настоящего момента задача удалена из проекта.
     </p>
   </html>
   `;

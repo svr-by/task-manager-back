@@ -4,7 +4,7 @@ import { StatusCodes } from 'http-status-codes';
 import { ITask, TTaskCreateInput, TTaskUpdateInput, TTaskSetUpdateInput } from '@/types/taskType';
 import { IUser } from '@/types/userType';
 import { asyncErrorHandler, validationErrorHandler } from '@/services/errorService';
-import { sendUpdateTaskEmail } from '@/services/emailService';
+import { sendUpdateTaskEmail, sendDeleteTaskEmail } from '@/services/emailService';
 import { createDbId } from '@/services/databaseService';
 import {
   EntityExistsError,
@@ -172,7 +172,7 @@ export const updateTaskSet = asyncErrorHandler(
         await task.populate('assigneeRef subscriberRefs', 'name email');
         if (task.subscriberRefs.length) {
           const taskUrl = `http://${req.headers.host}/tasks/${task._id}`;
-          await sendUpdateTaskEmail({
+          sendUpdateTaskEmail({
             subscribers: task.subscriberRefs as IUser[],
             taskUrl,
             title: task.title,
@@ -183,3 +183,27 @@ export const updateTaskSet = asyncErrorHandler(
     res.json(tasksBuffer);
   }
 );
+
+export const deleteTask = asyncErrorHandler(async (req: Request, res: Response) => {
+  validationErrorHandler(req);
+  const taskId = req.params.id;
+  const task = await Task.findById(taskId);
+  if (!task) {
+    throw new NotFoundError(TASK_ERR_MES.NOT_FOUND);
+  }
+  const userId = req.userId;
+  const hasAccess = await task.checkUserAccess(userId);
+  if (!hasAccess) {
+    throw new ForbiddenError(PROJECT_ERR_MES.NO_ACCESS);
+  }
+  await Task.findByIdAndDelete(taskId);
+
+  if (NODE_ENV !== 'test' && task.subscriberRefs.length) {
+    await task.populate('subscriberRefs', 'email');
+    sendDeleteTaskEmail({
+      subscribers: task.subscriberRefs as IUser[],
+      title: task.title,
+    });
+  }
+  res.sendStatus(StatusCodes.NO_CONTENT);
+});

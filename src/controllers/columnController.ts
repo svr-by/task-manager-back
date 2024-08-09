@@ -132,7 +132,7 @@ export const updateColumnSet = asyncErrorHandler(
   }
 );
 
-export const deleteColumn = asyncErrorHandler(async (req, res) => {
+export const deleteColumn = asyncErrorHandler(async (req: Request, res: Response) => {
   validationErrorHandler(req);
   const columnId = req.params.id;
   const column = await Column.findById(columnId);
