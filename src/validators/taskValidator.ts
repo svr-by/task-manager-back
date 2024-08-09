@@ -1,5 +1,6 @@
 import { body } from 'express-validator';
 import {
+  validateParamId,
   validateBodyTitle,
   validateBodyOrder,
   validateBodyDesc,
@@ -11,6 +12,14 @@ export const validateCreateTaskParams = () => [
   validateBodyOrder(),
   body('columnId').isMongoId().withMessage(COLUMN_ERR_MES.ID_INVALID),
   body('assigneeId').isMongoId().withMessage(TASK_ERR_MES.ASSIGNE_ID).optional(),
+  body('priority').isInt({ min: 0 }).withMessage(TASK_ERR_MES.PRIORITY_VALUE).optional(),
+  validateBodyDesc().optional(),
+];
+
+export const validateUpdateTaskParams = () => [
+  validateParamId(),
+  validateBodyTitle().optional(),
+  body('assigneeId').isMongoId().withMessage(TASK_ERR_MES.ASSIGNE_ID).optional({ nullable: true }),
   body('priority').isInt({ min: 0 }).withMessage(TASK_ERR_MES.PRIORITY_VALUE).optional(),
   validateBodyDesc().optional(),
 ];
