@@ -337,7 +337,7 @@ describe('TESTS: column actions', () => {
   });
 
   it('should not create a column when the number of columns is exceeded', async () => {
-    for (let i = 1; i <= MAX_COLUMN_NUMBER_PER_PROJECT; i++) {
+    for (let i = 4; i <= MAX_COLUMN_NUMBER_PER_PROJECT; i++) {
       url = `/columns`;
       response = await supertest(app)
         .post(url)
@@ -1191,6 +1191,45 @@ describe('TESTS: column actions', () => {
   });
 
   it('should delete a column with associated tasks', async () => {
-    //TODO: add test
+    url = `/columns`;
+    response = await supertest(app)
+      .post(url)
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${userAccessToken}`)
+      .send({
+        projectId,
+        title: 'Column 1',
+        order: 4,
+      });
+    expect(response.status, url).to.equal(201);
+    const columnId = response.body.id;
+
+    url = `/tasks`;
+    response = await supertest(app)
+      .post(url)
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${userAccessToken}`)
+      .send({
+        projectId,
+        columnId,
+        title: 'Task 1',
+        order: 1,
+      });
+    expect(response.status, url).to.equal(201);
+    const taskId = response.body.id;
+
+    url = `/columns/${columnId}`;
+    response = await supertest(app)
+      .delete(url)
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${userAccessToken}`);
+    expect(response.status, url).to.equal(204);
+
+    url = `/tasks/${taskId}`;
+    response = await supertest(app)
+      .get(url)
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${userAccessToken}`);
+    expect(response.status, url).to.equal(404);
   });
 });

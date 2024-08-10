@@ -22,6 +22,7 @@ import config from '@/common/config';
 import User from '@/models/userModel';
 import Project from '@/models/projectModel';
 import Column from '@/models/columnModel';
+import Task from '@/models/taskModel';
 
 const { NODE_ENV } = config;
 
@@ -90,7 +91,10 @@ export const deleteProject = asyncErrorHandler(async (req: Request, res: Respons
   if (!deletedProject) {
     throw new NotFoundError(PROJECT_ERR_MES.NOT_FOUND_OR_NO_ACCESS);
   }
-  //TODO: delete columns and tasks of the project
+  await Promise.all([
+    Column.deleteMany({ projectRef: projectId }),
+    Task.deleteMany({ projectRef: projectId }),
+  ]);
   res.sendStatus(StatusCodes.NO_CONTENT);
 });
 

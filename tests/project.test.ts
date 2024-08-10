@@ -766,8 +766,72 @@ describe('TESTS: project actions', () => {
     expect(response.text, url).to.equal(PROJECT_ERR_MES.NOT_FOUND);
   });
 
-  it('should delete the project along with columns and tasks', async () => {
-    //TODO: add test
+  it('should delete the project with associated columns and tasks', async () => {
+    url = `/projects`;
+    response = await supertest(app)
+      .post(url)
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${userAccessToken}`)
+      .send({
+        title: 'Project 1',
+      });
+    expect(response.status, url).to.equal(201);
+    const projectId = response.body.id;
+
+    url = `/columns`;
+    response = await supertest(app)
+      .post(url)
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${userAccessToken}`)
+      .send({
+        projectId,
+        title: 'Column 1',
+        order: 4,
+      });
+    expect(response.status, url).to.equal(201);
+    const columnId = response.body.id;
+
+    url = `/tasks`;
+    response = await supertest(app)
+      .post(url)
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${userAccessToken}`)
+      .send({
+        projectId,
+        columnId,
+        title: 'Task 1',
+        order: 1,
+      });
+    expect(response.status, url).to.equal(201);
+    const taskId = response.body.id;
+
+    url = `/projects/${projectId}`;
+    response = await supertest(app)
+      .delete(url)
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${userAccessToken}`);
+    expect(response.status, url).to.equal(204);
+
+    url = `/projects/${projectId}`;
+    response = await supertest(app)
+      .get(url)
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${userAccessToken}`);
+    expect(response.status, url).to.equal(404);
+
+    url = `/columns/${columnId}`;
+    response = await supertest(app)
+      .get(url)
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${userAccessToken}`);
+    expect(response.status, url).to.equal(404);
+
+    url = `/tasks/${taskId}`;
+    response = await supertest(app)
+      .get(url)
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${userAccessToken}`);
+    expect(response.status, url).to.equal(404);
   });
 
   it('should invite member with validate email', async () => {

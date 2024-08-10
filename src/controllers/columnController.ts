@@ -18,6 +18,7 @@ import {
 import config from '@/common/config';
 import Project from '@/models/projectModel';
 import Column from '@/models/columnModel';
+import Task from '@/models/taskModel';
 
 const { MAX_COLUMN_NUMBER_PER_PROJECT } = config;
 
@@ -144,7 +145,6 @@ export const deleteColumn = asyncErrorHandler(async (req: Request, res: Response
   if (!hasAccess) {
     throw new ForbiddenError(PROJECT_ERR_MES.NO_ACCESS);
   }
-  await Column.findByIdAndDelete(columnId);
-  //TODO: delete tasks of the column
+  await Promise.all([Column.findByIdAndDelete(columnId), Task.deleteMany({ columnRef: columnId })]);
   res.sendStatus(StatusCodes.NO_CONTENT);
 });
