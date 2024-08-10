@@ -29,7 +29,7 @@ export const createProject = asyncErrorHandler(
     const { title, description } = req.body;
     const duplicateProject = await Project.findOne({ title }).exec();
     if (duplicateProject) {
-      throw new EntityExistsError(PROJECT_ERR_MES.TITLE_EXIST);
+      throw new EntityExistsError(PROJECT_ERR_MES.REPEATED);
     }
     const userId = req.userId;
     const newProject = await Project.create({ title, ownerRef: userId, description });

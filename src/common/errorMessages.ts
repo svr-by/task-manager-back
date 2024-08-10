@@ -14,6 +14,8 @@ export enum COMMON_ERR_MES {
 }
 
 export enum USER_ERR_MES {
+  NOT_FOUND = 'User not found',
+  NOT_FOUND_OR_NOT_VERIFIED = 'User not found or not verified',
   ACC_TKN_EXPIRED = 'Access token has expired',
   ACC_TKN_INVALID = 'Invalid access token',
   CONF_TKN_INVALID = 'Confirmation token is invalid',
@@ -31,14 +33,12 @@ export enum USER_ERR_MES {
   PWD_STRING = 'Password must be string',
   PWD_LENGTH = 'Password length is not valid',
   NOT_CONFIRMED = 'User has not confirmed the email',
-  NOT_FOUND = 'User not found',
-  NOT_FOUND_OR_NOT_VERIFIED = 'User not found or not verified',
   ACCESS_DENIED = 'Access to change other users is denied',
 }
 
 export enum PROJECT_ERR_MES {
-  TITLE_EXIST = 'Project with this title already exists',
   NOT_FOUND = 'Project not found',
+  REPEATED = 'Title of the project must not be repeated',
   NO_ACCESS = 'Access to the project is denied',
   NOT_FOUND_OR_NO_ACCESS = 'Project not found or access denied',
   INV_TKN_EXPIRED = 'Invitation token is not valid or expired',
@@ -47,13 +47,28 @@ export enum PROJECT_ERR_MES {
 }
 
 export enum COLUMN_ERR_MES {
-  TITLE_EXIST = 'Column with this title already exists',
-  NUMBER_EXCEEDED = 'Maximum number of columns in project exceeded',
   NOT_FOUND = 'Column not found',
-  UPDATE_ARRAY = 'Column update must be an array',
-  UPDATE_OBJECT = 'Column data must be an object',
-  UPDATE_ID = 'Column ID must be database document ID',
+  REPEATED = 'Title of the column must not be repeated',
+  NUMBER_EXCEEDED = 'Maximum number of columns in project exceeded',
+  ID_INVALID = 'Column ID must be database document ID',
+  UPDATE_ARRAY = 'Column update set must be an array',
+  UPDATE_OBJECT = 'Column update data must be an object',
   UPDATE_ORDER = 'Column order must be a positive integer',
   UPDATE_REPEATED = 'Columns must not be repeated',
   SAME_PROJECT = 'Columns must belong to the same project',
+}
+
+export enum TASK_ERR_MES {
+  NOT_FOUND = 'Task not found',
+  REPEATED = 'Order or title of the task must not be repeated',
+  NUMBER_EXCEEDED = 'Maximum number of tasks in project exceeded',
+  ID_INVALID = 'Task ID must be database document ID',
+  ASSIGNE_ID = 'Assignee ID must be database document ID',
+  ASSIGNE_NO_ACCESS = 'Assignee access to the project is denied',
+  PRIORITY_VALUE = 'Priority must be a positive integer',
+  UPDATE_ARRAY = 'Task update set must be an array',
+  UPDATE_OBJECT = 'Task update data must be an object',
+  UPDATE_ORDER = 'Task order must be a positive integer',
+  UPDATE_REPEATED = 'Tasks must not be repeated',
+  SAME_PROJECT = 'Tasks must belong to the same project',
 }

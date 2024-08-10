@@ -29,6 +29,17 @@ interface ISendInvEmail {
   title: string;
 }
 
+interface ISendUpdateTaskEmail {
+  subscribers: { email: string }[];
+  taskUrl: string;
+  title: string;
+}
+
+interface ISendDeleteTaskEmail {
+  subscribers: { email: string }[];
+  title: string;
+}
+
 export const sendEmail = async ({ email, subject, text, html }: ISendEmail) => {
   const transporter = createTransport({
     host: EMAIL_HOST,
@@ -131,4 +142,41 @@ export const sendInvOwnerEmail = async ({ email, invUrl, title }: ISendInvEmail)
   </html>
   `;
   return sendEmail({ email, subject, html: content });
+};
+
+export const sendUpdateTaskEmail = async ({
+  subscribers,
+  taskUrl,
+  title,
+}: ISendUpdateTaskEmail) => {
+  const subject = `Обновление задачи "${title}"`;
+  const content = `
+  <html>
+    <h2>Здравствуйте!</h2>
+    <p>Вы получили это письмо потому, что подписаны на задачу <strong>"${title}"</strong>.<br/>
+      Изменения можно просмотреть по ссылке:
+    </p>
+    <p>
+      <a href=${taskUrl} clicktracking=off>${taskUrl}</a>
+    </p>
+  </html>
+  `;
+  return Promise.all(
+    subscribers.map((subs) => sendEmail({ email: subs.email, subject, html: content }))
+  );
+};
+
+export const sendDeleteTaskEmail = async ({ subscribers, title }: ISendDeleteTaskEmail) => {
+  const subject = `Задача "${title}" удалена`;
+  const content = `
+  <html>
+    <h2>Здравствуйте!</h2>
+    <p>Вы получили это письмо потому, что подписаны на задачу <strong>"${title}"</strong>.<br/>
+      Сообщаем, что с настоящего момента задача удалена из проекта.
+    </p>
+  </html>
+  `;
+  return Promise.all(
+    subscribers.map((subs) => sendEmail({ email: subs.email, subject, html: content }))
+  );
 };

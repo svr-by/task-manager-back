@@ -11,6 +11,7 @@ import authRouter from '@/routes/authRouter';
 import userRouter from '@/routes/userRouter';
 import projectRouter from '@/routes/projectRouter';
 import columnRouter from '@/routes/columnRouter';
+import taskRouter from '@/routes/taskRouter';
 
 const app = express();
 
@@ -23,6 +24,7 @@ app.use(verifyToken);
 app.use('/users', userRouter);
 app.use('/projects', projectRouter);
 app.use('/columns', columnRouter);
+app.use('/tasks', taskRouter);
 app.use(errorHandler);
 app.get('*', (req, res) => {
   res.sendStatus(StatusCodes.NOT_FOUND);
