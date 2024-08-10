@@ -21,6 +21,7 @@ import {
 import config from '@/common/config';
 import User from '@/models/userModel';
 import Project from '@/models/projectModel';
+import Column from '@/models/columnModel';
 
 const { NODE_ENV } = config;
 
@@ -34,6 +35,11 @@ export const createProject = asyncErrorHandler(
     }
     const userId = req.userId;
     const newProject = await Project.create({ title, ownerRef: userId, description });
+    await Column.insertMany([
+      { title: 'Новые', projectRef: newProject._id, order: 1 },
+      { title: 'В процессе', projectRef: newProject._id, order: 2 },
+      { title: 'Готовые', projectRef: newProject._id, order: 3 },
+    ]);
     res.status(StatusCodes.CREATED).json(newProject);
   }
 );

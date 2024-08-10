@@ -276,7 +276,28 @@ describe('TESTS: project actions', () => {
   });
 
   it('should create default columns', async () => {
-    //TODO: add test
+    url = `/projects`;
+    response = await supertest(app)
+      .post(url)
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${userAccessToken}`)
+      .send({
+        title: 'Project 1',
+      });
+    expect(response.status, url).to.equal(201);
+    const projectId = response.body.id;
+
+    url = `/projects/${projectId}`;
+    response = await supertest(app)
+      .get(url)
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${userAccessToken}`);
+    expect(response.status, url).to.equal(200);
+    expect(response.body.columns, url).to.have.lengthOf(3);
+    const colTitles = response.body.columns.map((col: { title: string }) => col.title);
+    expect(colTitles, url).to.include('Новые');
+    expect(colTitles, url).to.include('В процессе');
+    expect(colTitles, url).to.include('Готовые');
   });
 
   it('should return project list of all projects', async () => {
@@ -414,8 +435,9 @@ describe('TESTS: project actions', () => {
       .set('Authorization', `Bearer ${userAccessToken}`);
     expect(response.status, url).to.equal(200);
     const project = response.body;
-    expect(project.columns, url).to.have.lengthOf(1);
+    expect(project.columns, url).to.have.lengthOf(4);
     expect(project.tasks, url).to.have.lengthOf(1);
+    expect(project.tasks[0].title, url).to.equal('Task 1');
   });
 
   it('should forbidden access to project for non-member', async () => {
