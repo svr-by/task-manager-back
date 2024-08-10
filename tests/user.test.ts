@@ -135,6 +135,63 @@ describe('TESTS: user actions', () => {
     expect(user.password, url).to.equal(undefined);
   });
 
+  it('should return user with associated projects', async () => {
+    url = `/projects`;
+    response = await supertest(app)
+      .post(url)
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${anotherUserAccessToken}`)
+      .send({
+        title: 'Project 1',
+      });
+    expect(response.status, url).to.equal(201);
+    const projectId = response.body.id;
+
+    url = `/projects/${projectId}/member`;
+    response = await supertest(app)
+      .post(url)
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${anotherUserAccessToken}`)
+      .send({
+        email: userMock.email,
+      });
+    expect(response.status, url).to.equal(201);
+    const invToken = response.body.invToken;
+    expect(invToken).to.be.a('string');
+
+    url = `/projects/${projectId}/member/${invToken}`;
+    response = await supertest(app)
+      .get(url)
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${userAccessToken}`);
+    expect(response.status, url).to.equal(200);
+
+    url = `/projects`;
+    response = await supertest(app)
+      .post(url)
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${userAccessToken}`)
+      .send({
+        title: 'Project 2',
+      });
+    expect(response.status, url).to.equal(201);
+
+    url = `/users/${userId}`;
+    response = await supertest(app)
+      .get(url)
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${userAccessToken}`);
+    expect(response.status, url).to.equal(200);
+    const user = response.body;
+    expect(user.id, url).to.equal(userId);
+    expect(user.name, url).to.equal(userMock.name);
+    expect(user.email, url).to.equal(userMock.email);
+    expect(user.projects, url).to.have.lengthOf(1);
+    expect(user.ownProjects, url).to.have.lengthOf(1);
+    expect(user.projects[0].title, url).to.equal('Project 1');
+    expect(user.ownProjects[0].title, url).to.equal('Project 2');
+  });
+
   it('should update user with validate all params', async () => {
     url = `/users/${userId}`;
     response = await supertest(app)
@@ -274,10 +331,10 @@ describe('TESTS: user actions', () => {
 
     url = '/auth/signout';
     response = await supertest(app)
-      .get(url)
+      .post(url)
       .set('Accept', 'application/json')
       .set('Authorization', `Bearer ${userAccessToken}`);
-    expect(response.status, url).to.equal(205);
+    expect(response.status, url).to.equal(204);
 
     url = '/auth/signin';
     response = await supertest(app).post(url).set('Accept', 'application/json').send({
@@ -332,7 +389,7 @@ describe('TESTS: user actions', () => {
       .delete(url)
       .set('Accept', 'application/json')
       .set('Authorization', `Bearer ${userAccessToken}`);
-    expect(response.status, url).to.equal(200);
+    expect(response.status, url).to.equal(204);
 
     url = `/users/${userId}`;
     response = await supertest(app)

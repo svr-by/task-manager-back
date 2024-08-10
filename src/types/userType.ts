@@ -1,4 +1,5 @@
 import { Document, Model, Types } from 'mongoose';
+import { IProject } from './projectType';
 
 export interface IUser extends Document {
   _id: Types.ObjectId;
@@ -6,6 +7,8 @@ export interface IUser extends Document {
   email: string;
   password: string;
   isVerified: boolean;
+  projects?: IProject[];
+  ownProjects?: IProject[];
   tokens: string[];
 }
 

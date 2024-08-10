@@ -1,9 +1,10 @@
 import { Response, Request } from 'express';
+import { StatusCodes } from 'http-status-codes';
 
 import { TUserUpdateInput } from '@/types/userType';
 import { asyncErrorHandler, validationErrorHandler } from '@/services/errorService';
-import { USER_ERR_MES } from '@/common/errorMessages';
 import { NotFoundError, ForbiddenError } from '@/common/appError';
+import { USER_ERR_MES } from '@/common/errorMessages';
 import User from '@/models/userModel';
 
 export const getAllUsers = asyncErrorHandler(async (req: Request, res: Response) => {
@@ -15,7 +16,7 @@ export const getAllUsers = asyncErrorHandler(async (req: Request, res: Response)
 export const getUser = asyncErrorHandler(async (req: Request, res: Response) => {
   validationErrorHandler(req);
   const userId = req.params.id;
-  const user = await User.findById(userId);
+  const user = await User.findById(userId).populate('projects ownProjects');
   if (!user) {
     throw new NotFoundError(USER_ERR_MES.NOT_FOUND);
   }
@@ -30,7 +31,11 @@ export const updateUser = asyncErrorHandler(
       throw new ForbiddenError(USER_ERR_MES.ACCESS_DENIED);
     }
     const { name, password } = req.body;
-    const updatedUser = await User.findByIdAndUpdate(userId, { name, password }, { new: true });
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { name, password },
+      { new: true }
+    ).populate('projects ownProjects');
     if (!updatedUser) {
       throw new NotFoundError(USER_ERR_MES.NOT_FOUND);
     }
@@ -49,5 +54,5 @@ export const deleteUser = asyncErrorHandler(async (req, res) => {
   if (!deletedUser) {
     throw new NotFoundError(USER_ERR_MES.NOT_FOUND);
   }
-  res.json(deletedUser);
+  res.sendStatus(StatusCodes.NO_CONTENT);
 });
