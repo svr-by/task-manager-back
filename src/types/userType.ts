@@ -7,7 +7,6 @@ export interface IUser extends Document {
   password: string;
   isVerified: boolean;
   tokens: string[];
-  notes?: string;
 }
 
 export interface IUserMethods {

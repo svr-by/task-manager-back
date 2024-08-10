@@ -30,6 +30,18 @@ const projectScheme = new Schema<IProject, IProjectModel, IProjectMethods>(
   }
 );
 
+projectScheme.virtual('columns', {
+  ref: MODEL_NAME.COLUMN,
+  localField: '_id',
+  foreignField: 'projectRef',
+});
+
+projectScheme.virtual('tasks', {
+  ref: MODEL_NAME.TASK,
+  localField: '_id',
+  foreignField: 'projectRef',
+});
+
 projectScheme.method(
   'checkUserAccess',
   function (userId: string, options?: { onlyOwner: boolean }) {

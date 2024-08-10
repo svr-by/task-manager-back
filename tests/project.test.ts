@@ -369,8 +369,53 @@ describe('TESTS: project actions', () => {
     expect(project.ownerRef, url).to.equal(userId);
   });
 
-  it('should return project with columns and tasks', async () => {
-    //TODO: add test
+  it('should return project with associated columns and tasks', async () => {
+    url = `/projects`;
+    response = await supertest(app)
+      .post(url)
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${userAccessToken}`)
+      .send({
+        title: 'Project 1',
+      });
+    expect(response.status, url).to.equal(201);
+    const projectId = response.body.id;
+
+    url = `/columns`;
+    response = await supertest(app)
+      .post(url)
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${userAccessToken}`)
+      .send({
+        projectId,
+        title: 'Column 1',
+        order: 4,
+      });
+    expect(response.status, url).to.equal(201);
+    const columnId = response.body.id;
+
+    url = `/tasks`;
+    response = await supertest(app)
+      .post(url)
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${userAccessToken}`)
+      .send({
+        projectId,
+        columnId,
+        title: 'Task 1',
+        order: 1,
+      });
+    expect(response.status, url).to.equal(201);
+
+    url = `/projects/${projectId}`;
+    response = await supertest(app)
+      .get(url)
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${userAccessToken}`);
+    expect(response.status, url).to.equal(200);
+    const project = response.body;
+    expect(project.columns, url).to.have.lengthOf(1);
+    expect(project.tasks, url).to.have.lengthOf(1);
   });
 
   it('should forbidden access to project for non-member', async () => {
@@ -853,7 +898,7 @@ describe('TESTS: project actions', () => {
       .send({
         email: memberUserMock.email,
       });
-    expect(response.status, url).to.equal(404);
+    expect(response.status, url).to.equal(403);
     expect(response.text, url).to.equal(PROJECT_ERR_MES.NOT_FOUND_OR_NO_ACCESS);
   });
 
@@ -1116,7 +1161,7 @@ describe('TESTS: project actions', () => {
       .delete(url)
       .set('Accept', 'application/json')
       .set('Authorization', `Bearer ${memberUserAccessToken}`);
-    expect(response.status, url).to.equal(404);
+    expect(response.status, url).to.equal(403);
     expect(response.text, url).to.equal(PROJECT_ERR_MES.NOT_FOUND_OR_NO_ACCESS);
 
     url = `/projects/${projectId}/member/${memberUserId}`;
@@ -1124,7 +1169,7 @@ describe('TESTS: project actions', () => {
       .delete(url)
       .set('Accept', 'application/json')
       .set('Authorization', `Bearer ${userAccessToken}`);
-    expect(response.status, url).to.equal(200);
+    expect(response.status, url).to.equal(204);
 
     url = `/projects/${projectId}/member/${memberUserId}`;
     response = await supertest(app)
@@ -1302,7 +1347,7 @@ describe('TESTS: project actions', () => {
       .send({
         email: memberUserMock.email,
       });
-    expect(response.status, url).to.equal(404);
+    expect(response.status, url).to.equal(403);
     expect(response.text, url).to.equal(PROJECT_ERR_MES.NOT_FOUND_OR_NO_ACCESS);
   });
 

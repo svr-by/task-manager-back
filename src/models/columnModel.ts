@@ -27,6 +27,12 @@ const columnScheme = new Schema<IColumn, IColumnModel, IColumnMethods>(
   }
 );
 
+columnScheme.virtual('tasks', {
+  ref: MODEL_NAME.TASK,
+  localField: '_id',
+  foreignField: 'columnRef',
+});
+
 columnScheme.method('checkUserAccess', async function (userId) {
   await this.populate('projectRef');
   const hasAccess = !!(this.projectRef as IProjectMethods)?.checkUserAccess(userId);

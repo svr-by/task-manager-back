@@ -52,7 +52,7 @@ export const createColumn = asyncErrorHandler(
 export const getColumn = asyncErrorHandler(async (req: Request, res: Response) => {
   validationErrorHandler(req);
   const columnId = req.params.id;
-  const column = await Column.findById(columnId);
+  const column = await Column.findById(columnId).populate('tasks');
   if (!column) {
     throw new NotFoundError(COLUMN_ERR_MES.NOT_FOUND);
   }
@@ -89,7 +89,7 @@ export const updateColumn = asyncErrorHandler(
       { _id: columnId },
       { title },
       { new: true }
-    );
+    ).populate('tasks');
     res.json(updatedColumn);
   }
 );

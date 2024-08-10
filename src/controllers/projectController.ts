@@ -1,4 +1,5 @@
 import { Response, Request } from 'express';
+import { Types } from 'mongoose';
 import { StatusCodes } from 'http-status-codes';
 
 import { asyncErrorHandler, validationErrorHandler } from '@/services/errorService';
@@ -9,6 +10,7 @@ import {
 } from '@/types/projectType';
 import { sendInvMemberEmail, sendInvOwnerEmail } from '@/services/emailService';
 import { decodeInvMemberToken, decodeInvOwnerToken } from '@/services/tokenService';
+import { createDbId } from '@/services/databaseService';
 import { PROJECT_ERR_MES, USER_ERR_MES } from '@/common/errorMessages';
 import {
   EntityExistsError,
@@ -17,9 +19,8 @@ import {
   BadRequestError,
 } from '@/common/appError';
 import config from '@/common/config';
-import Project from '@/models/projectModel';
 import User from '@/models/userModel';
-import { createDbId } from '@/services/databaseService';
+import Project from '@/models/projectModel';
 
 const { NODE_ENV } = config;
 
@@ -33,7 +34,6 @@ export const createProject = asyncErrorHandler(
     }
     const userId = req.userId;
     const newProject = await Project.create({ title, ownerRef: userId, description });
-    //TODO: add default columns
     res.status(StatusCodes.CREATED).json(newProject);
   }
 );
@@ -46,7 +46,7 @@ export const getAllProjects = asyncErrorHandler(async (req: Request, res: Respon
 export const getProject = asyncErrorHandler(async (req: Request, res: Response) => {
   validationErrorHandler(req);
   const projectId = req.params.id;
-  const project = await Project.findById(projectId);
+  const project = await Project.findById(projectId).populate('columns tasks');
   if (!project) {
     throw new NotFoundError(PROJECT_ERR_MES.NOT_FOUND);
   }
@@ -68,7 +68,7 @@ export const updateProject = asyncErrorHandler(
       { _id: projectId, ownerRef: userId },
       { title, description },
       { new: true }
-    );
+    ).populate('columns tasks');
     if (!updatedProject) {
       throw new NotFoundError(PROJECT_ERR_MES.NOT_FOUND_OR_NO_ACCESS);
     }
@@ -99,7 +99,7 @@ export const inviteMember = asyncErrorHandler(
       User.findOne({ email }),
     ]);
     if (!project) {
-      throw new NotFoundError(PROJECT_ERR_MES.NOT_FOUND_OR_NO_ACCESS);
+      throw new ForbiddenError(PROJECT_ERR_MES.NOT_FOUND_OR_NO_ACCESS);
     }
     if (!invitedUser || !invitedUser.isVerified) {
       throw new NotFoundError(USER_ERR_MES.NOT_FOUND_OR_NOT_VERIFIED);
@@ -134,7 +134,7 @@ export const becomeMember = asyncErrorHandler(async (req: Request, res: Response
     throw new ForbiddenError(PROJECT_ERR_MES.INV_TKN_INCORRECT);
   }
   project.filterTokens(invToken);
-  project.membersRef.push(createDbId(userId));
+  (project.membersRef as Types.ObjectId[]).push(createDbId(userId));
   await project.save();
   res.send('Project member has been added');
 });
@@ -146,7 +146,7 @@ export const deleteMember = asyncErrorHandler(async (req: Request, res: Response
   const memberId = req.params.userId;
   const project = await Project.findOne({ _id: projectId, ownerRef: ownerId });
   if (!project) {
-    throw new NotFoundError(PROJECT_ERR_MES.NOT_FOUND_OR_NO_ACCESS);
+    throw new ForbiddenError(PROJECT_ERR_MES.NOT_FOUND_OR_NO_ACCESS);
   }
   const memberIndex = project.membersRef.findIndex((member) => member.toString() === memberId);
   if (memberIndex === -1) {
@@ -154,7 +154,7 @@ export const deleteMember = asyncErrorHandler(async (req: Request, res: Response
   }
   project.membersRef.splice(memberIndex, 1);
   await project.save();
-  res.json(project);
+  res.sendStatus(StatusCodes.NO_CONTENT);
 });
 
 export const inviteOwner = asyncErrorHandler(
@@ -168,7 +168,7 @@ export const inviteOwner = asyncErrorHandler(
       User.findOne({ email }),
     ]);
     if (!project) {
-      throw new NotFoundError(PROJECT_ERR_MES.NOT_FOUND_OR_NO_ACCESS);
+      throw new ForbiddenError(PROJECT_ERR_MES.NOT_FOUND_OR_NO_ACCESS);
     }
     if (!invitedUser || !invitedUser?.isVerified) {
       throw new NotFoundError(USER_ERR_MES.NOT_FOUND_OR_NOT_VERIFIED);
@@ -203,7 +203,7 @@ export const becomeOwner = asyncErrorHandler(async (req: Request, res: Response)
     throw new ForbiddenError(PROJECT_ERR_MES.INV_TKN_INCORRECT);
   }
   project.filterTokens(invToken);
-  project.membersRef.push(project.ownerRef);
+  (project.membersRef as Types.ObjectId[]).push(project.ownerRef as Types.ObjectId);
   project.ownerRef = createDbId(userId);
   await project.save();
   res.send('Project owner has been changed');

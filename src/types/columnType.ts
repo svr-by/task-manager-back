@@ -1,11 +1,13 @@
 import { Document, Model, Types } from 'mongoose';
-import { IProjectMethods } from './projectType';
+import { IProject, IProjectMethods } from '@/types/projectType';
+import { ITask } from '@/types/taskType';
 
 export interface IColumn extends Document {
   _id: Types.ObjectId;
   title: string;
-  projectRef: Types.ObjectId | IProjectMethods;
+  projectRef: Types.ObjectId | (IProject & IProjectMethods);
   order: number;
+  tasks: ITask[];
 }
 
 export interface IColumnMethods {

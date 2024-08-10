@@ -443,6 +443,44 @@ describe('TESTS: column actions', () => {
     expect(response.status, url).to.equal(403);
   });
 
+  it('should return column with associated tasks', async () => {
+    url = `/columns`;
+    response = await supertest(app)
+      .post(url)
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${userAccessToken}`)
+      .send({
+        projectId,
+        title: 'Column 1',
+        order: 4,
+      });
+    expect(response.status, url).to.equal(201);
+    const columnId = response.body.id;
+
+    url = `/tasks`;
+    response = await supertest(app)
+      .post(url)
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${userAccessToken}`)
+      .send({
+        projectId,
+        columnId,
+        title: 'Task 1',
+        order: 1,
+      });
+    expect(response.status, url).to.equal(201);
+
+    url = `/columns/${columnId}`;
+    response = await supertest(app)
+      .get(url)
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${userAccessToken}`);
+    expect(response.status, url).to.equal(200);
+    const column = response.body;
+    expect(column.tasks, url).to.have.lengthOf(1);
+    expect(column.tasks[0].title, url).to.equal('Task 1');
+  });
+
   it('should return a column by member', async () => {
     url = `/columns`;
     response = await supertest(app)

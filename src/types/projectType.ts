@@ -1,10 +1,15 @@
 import { Document, Model, Types } from 'mongoose';
+import { IColumn } from '@/types/columnType';
+import { ITask } from '@/types/taskType';
+import { IUser } from '@/types/userType';
 
 export interface IProject extends Document {
   _id: Types.ObjectId;
   title: string;
-  ownerRef: Types.ObjectId;
-  membersRef: Types.ObjectId[];
+  ownerRef: Types.ObjectId | IUser;
+  membersRef: Types.ObjectId[] | IUser[];
+  columns: IColumn[];
+  tasks: ITask[];
   tokens: string[];
   description?: string;
 }

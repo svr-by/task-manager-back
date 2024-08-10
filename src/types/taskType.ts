@@ -1,13 +1,13 @@
 import { Document, Model, Types } from 'mongoose';
-import { IProjectMethods } from './projectType';
-import { IUser } from './userType';
+import { IProject, IProjectMethods } from '@/types/projectType';
+import { IUser } from '@/types/userType';
 
 export interface ITask extends Document {
   _id: Types.ObjectId;
   title: string;
-  projectRef: Types.ObjectId | IProjectMethods;
+  projectRef: Types.ObjectId | (IProject & IProjectMethods);
   columnRef: Types.ObjectId;
-  assigneeRef?: Types.ObjectId;
+  assigneeRef?: Types.ObjectId | IUser;
   subscriberRefs: Types.ObjectId[] | IUser[];
   order: number;
   priority?: number;
