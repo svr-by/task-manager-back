@@ -1,7 +1,7 @@
 import { TUserSignupInput } from '@/types/userType';
 
 export const userMock: TUserSignupInput = {
-  name: 'New Musk',
+  name: 'New User',
   email: 'user@mail.com',
   password: '12345678910',
 };

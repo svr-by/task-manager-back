@@ -239,7 +239,7 @@ export const unsubscribeTask = asyncErrorHandler(async (req: Request, res: Respo
     throw new ForbiddenError(PROJECT_ERR_MES.NO_ACCESS);
   }
   (task.subscriberRefs as Types.ObjectId[]) = (task.subscriberRefs as Types.ObjectId[]).filter(
-    (memberId) => memberId.toString() !== userId
+    (subsRef) => subsRef.toString() !== userId
   );
   await task.save();
   res.sendStatus(StatusCodes.NO_CONTENT);

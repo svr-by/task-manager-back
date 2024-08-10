@@ -27,6 +27,30 @@ const userScheme = new Schema<IUser, IUserModel, IUserMethods>(
   }
 );
 
+userScheme.virtual('projects', {
+  ref: MODEL_NAME.PROJECT,
+  localField: '_id',
+  foreignField: 'membersRef',
+});
+
+userScheme.virtual('ownProjects', {
+  ref: MODEL_NAME.PROJECT,
+  localField: '_id',
+  foreignField: 'ownerRef',
+});
+
+userScheme.virtual('assigneeTasks', {
+  ref: MODEL_NAME.TASK,
+  localField: '_id',
+  foreignField: 'assigneeRef',
+});
+
+userScheme.virtual('subscriberTasks', {
+  ref: MODEL_NAME.TASK,
+  localField: '_id',
+  foreignField: 'subscriberRefs',
+});
+
 userScheme.pre('save', async function (next) {
   try {
     if (this.isModified('password')) {

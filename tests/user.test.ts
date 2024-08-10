@@ -399,4 +399,125 @@ describe('TESTS: user actions', () => {
     expect(response.status, url).to.equal(404);
     expect(response.text, url).to.equal(USER_ERR_MES.NOT_FOUND);
   });
+
+  it('should delete user from associated docs', async () => {
+    url = `/projects`;
+    response = await supertest(app)
+      .post(url)
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${anotherUserAccessToken}`)
+      .send({
+        title: 'Project 1',
+      });
+    expect(response.status, url).to.equal(201);
+    const memberProjectId = response.body.id;
+
+    url = `/projects/${memberProjectId}/member`;
+    response = await supertest(app)
+      .post(url)
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${anotherUserAccessToken}`)
+      .send({
+        email: userMock.email,
+      });
+    expect(response.status, url).to.equal(201);
+    const invToken = response.body.invToken;
+    expect(invToken).to.be.a('string');
+
+    url = `/projects/${memberProjectId}/member/${invToken}`;
+    response = await supertest(app)
+      .get(url)
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${userAccessToken}`);
+    expect(response.status, url).to.equal(200);
+
+    url = `/columns`;
+    response = await supertest(app)
+      .post(url)
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${userAccessToken}`)
+      .send({
+        projectId: memberProjectId,
+        title: 'Column 1',
+        order: 4,
+      });
+    expect(response.status, url).to.equal(201);
+    const columnId = response.body.id;
+
+    url = `/tasks`;
+    response = await supertest(app)
+      .post(url)
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${userAccessToken}`)
+      .send({
+        columnId,
+        title: 'Task 1',
+        order: 1,
+      });
+    expect(response.status, url).to.equal(201);
+    const assigneeTaskId = response.body.id;
+
+    url = `/tasks/${assigneeTaskId}`;
+    response = await supertest(app)
+      .put(url)
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${userAccessToken}`)
+      .send({
+        assigneeId: userId,
+      });
+    expect(response.status, url).to.equal(200);
+
+    url = `/tasks`;
+    response = await supertest(app)
+      .post(url)
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${userAccessToken}`)
+      .send({
+        columnId,
+        title: 'Task 2',
+        order: 2,
+      });
+    expect(response.status, url).to.equal(201);
+    const subscribeTaskId = response.body.id;
+
+    url = `/tasks/${subscribeTaskId}/subscribe`;
+    response = await supertest(app)
+      .post(url)
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${userAccessToken}`);
+    expect(response.status, url).to.equal(200);
+
+    url = `/users/${userId}`;
+    response = await supertest(app)
+      .delete(url)
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${userAccessToken}`);
+    expect(response.status, url).to.equal(204);
+
+    url = `/projects/${memberProjectId}`;
+    response = await supertest(app)
+      .get(url)
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${anotherUserAccessToken}`);
+    expect(response.status, url).to.equal(200);
+    expect(response.body.membersRef, url).to.have.lengthOf(0);
+
+    url = `/tasks/${assigneeTaskId}`;
+    response = await supertest(app)
+      .get(url)
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${anotherUserAccessToken}`);
+    expect(response.status, url).to.equal(200);
+    expect(response.body.assigneeRef, url).to.equal(undefined);
+    console.log(response.body);
+
+    url = `/tasks/${subscribeTaskId}`;
+    response = await supertest(app)
+      .get(url)
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${anotherUserAccessToken}`);
+    expect(response.status, url).to.equal(200);
+    expect(response.body.subscriberRefs, url).to.have.lengthOf(0);
+    console.log(response.body);
+  });
 });

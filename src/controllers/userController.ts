@@ -1,7 +1,10 @@
 import { Response, Request } from 'express';
 import { StatusCodes } from 'http-status-codes';
+import { Types } from 'mongoose';
 
 import { TUserUpdateInput } from '@/types/userType';
+import { IProject } from '@/types/projectType';
+import { ITask } from '@/types/taskType';
 import { asyncErrorHandler, validationErrorHandler } from '@/services/errorService';
 import { NotFoundError, ForbiddenError } from '@/common/appError';
 import { USER_ERR_MES } from '@/common/errorMessages';
@@ -49,10 +52,38 @@ export const deleteUser = asyncErrorHandler(async (req, res) => {
   if (userId !== req.userId) {
     throw new ForbiddenError(USER_ERR_MES.ACCESS_DENIED);
   }
-  //TODO: check user projects
-  const deletedUser = await User.findByIdAndDelete(userId);
-  if (!deletedUser) {
+  const user = await User.findById(userId).populate(
+    'projects ownProjects assigneeTasks subscriberTasks'
+  );
+  if (!user) {
     throw new NotFoundError(USER_ERR_MES.NOT_FOUND);
   }
+  const buffer: (IProject | ITask)[] = [];
+  if (user.ownProjects?.length) {
+    throw new ForbiddenError(USER_ERR_MES.HAVE_PROJECTS);
+  }
+  if (user.projects?.length) {
+    user.projects.forEach((project) => {
+      (project.membersRef as Types.ObjectId[]) = (project.membersRef as Types.ObjectId[]).filter(
+        (memberRef) => memberRef.toString() !== userId
+      );
+      buffer.push(project);
+    });
+  }
+  if (user.assigneeTasks?.length) {
+    user.assigneeTasks.forEach((task) => {
+      task.assigneeRef = undefined;
+      buffer.push(task);
+    });
+  }
+  if (user.subscriberTasks?.length) {
+    user.subscriberTasks.forEach((task) => {
+      (task.subscriberRefs as Types.ObjectId[]) = (task.subscriberRefs as Types.ObjectId[]).filter(
+        (subsRef) => subsRef.toString() !== userId
+      );
+      buffer.push(task);
+    });
+  }
+  await Promise.all([User.findByIdAndDelete(userId), ...buffer.map((doc) => doc.save())]);
   res.sendStatus(StatusCodes.NO_CONTENT);
 });

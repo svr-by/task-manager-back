@@ -1,5 +1,6 @@
 import { Document, Model, Types } from 'mongoose';
 import { IProject } from './projectType';
+import { ITask } from './taskType';
 
 export interface IUser extends Document {
   _id: Types.ObjectId;
@@ -9,6 +10,8 @@ export interface IUser extends Document {
   isVerified: boolean;
   projects?: IProject[];
   ownProjects?: IProject[];
+  assigneeTasks?: ITask[];
+  subscriberTasks?: ITask[];
   tokens: string[];
 }
 
