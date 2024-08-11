@@ -621,6 +621,40 @@ describe('TESTS: project actions', () => {
     expect(project.newField, url).to.equal(undefined);
   });
 
+  it('should not update project with repeated title', async () => {
+    url = `/projects`;
+    response = await supertest(app)
+      .post(url)
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${userAccessToken}`)
+      .send({
+        title: 'Project 1',
+        description: 'New project description',
+      });
+    expect(response.status, url).to.equal(201);
+    const projectId = response.body.id;
+
+    url = `/projects`;
+    response = await supertest(app)
+      .post(url)
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${userAccessToken}`)
+      .send({
+        title: 'Project 2',
+      });
+    expect(response.status, url).to.equal(201);
+
+    url = `/projects/${projectId}`;
+    response = await supertest(app)
+      .put(url)
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${userAccessToken}`)
+      .send({
+        title: 'Project 2',
+      });
+    expect(response.status, url).to.equal(409);
+  });
+
   it('should update the project only by owner', async () => {
     url = `/projects`;
     response = await supertest(app)

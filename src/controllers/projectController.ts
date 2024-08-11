@@ -30,8 +30,8 @@ export const createProject = asyncErrorHandler(
   async (req: Request<{}, {}, TProjectCreateInput>, res: Response) => {
     validationErrorHandler(req);
     const { title, description } = req.body;
-    const duplicateProject = await Project.findOne({ title }).exec();
-    if (duplicateProject) {
+    const duplProject = await Project.findOne({ title });
+    if (duplProject) {
       throw new EntityExistsError(PROJECT_ERR_MES.REPEATED);
     }
     const userId = req.userId;
@@ -71,6 +71,12 @@ export const updateProject = asyncErrorHandler(
     const projectId = req.params.id;
     const userId = req.userId;
     const { title, description } = req.body;
+    if (title) {
+      const duplProject = await Project.findOne({ title });
+      if (duplProject) {
+        throw new EntityExistsError(PROJECT_ERR_MES.REPEATED);
+      }
+    }
     const updatedProject = await Project.findOneAndUpdate(
       { _id: projectId, ownerRef: userId },
       { title, description },
