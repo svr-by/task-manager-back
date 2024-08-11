@@ -4,6 +4,7 @@ import cookieParser from 'cookie-parser';
 import { StatusCodes } from 'http-status-codes';
 
 import logEvents from '@/middlewares/logEvents';
+import validateBody from '@/middlewares/validateBody';
 import verifyToken from '@/middlewares/verifyToken';
 import errorHandler from '@/middlewares/errorHandler';
 import swaggerDocument from '@/common/swagger.json';
@@ -16,7 +17,8 @@ import taskRouter from '@/routes/taskRouter';
 const app = express();
 
 app.use(cookieParser());
-app.use(express.json());
+app.use(express.json({ strict: true }));
+app.use(validateBody);
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use(logEvents);
 app.use('/auth', authRouter);

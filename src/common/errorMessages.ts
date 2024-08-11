@@ -1,6 +1,7 @@
 export enum COMMON_ERR_MES {
   DB_ERROR = 'Database access error',
   ID_INVALID = 'ID param must be database document',
+  JSON_INVALID = 'Invalid body JSON format',
   USER_ID_INVALID = 'User ID must be database document',
   PROJECT_ID_INVALID = 'Project ID must be database document',
   TITLE_STRING = 'Title must be string',
