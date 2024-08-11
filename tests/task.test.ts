@@ -1751,7 +1751,7 @@ describe('TESTS: task actions', () => {
 
     url = `/tasks/${taskId}/subscribe`;
     response = await supertest(app)
-      .put(url)
+      .post(url)
       .set('Accept', 'application/json')
       .set('Authorization', `Bearer ${anotherUserAccessToken}`);
     expect(response.status, url).to.equal(403);
@@ -1780,7 +1780,7 @@ describe('TESTS: task actions', () => {
 
     url = `/tasks/${taskId}/subscribe`;
     response = await supertest(app)
-      .put(url)
+      .post(url)
       .set('Accept', 'application/json')
       .set('Authorization', `Bearer ${memberUserAccessToken}`);
     expect(response.status, url).to.equal(200);
@@ -1827,7 +1827,7 @@ describe('TESTS: task actions', () => {
 
     url = `/tasks/${taskId}/subscribe`;
     response = await supertest(app)
-      .put(url)
+      .post(url)
       .set('Accept', 'application/json')
       .set('Authorization', `Bearer ${userAccessToken}`);
     expect(response.status, url).to.equal(200);
@@ -1857,90 +1857,4 @@ describe('TESTS: task actions', () => {
     subsIds = response.body.subscriberRefs.map((subs: { id: string }) => subs.id);
     expect(subsIds, url).to.not.include(userId);
   });
-
-  // it('test subscribe', async () => {
-  //   url = `/tasks`;
-  //   response = await supertest(app)
-  //     .post(url)
-  //     .set('Accept', 'application/json')
-  //     .set('Authorization', `Bearer ${userAccessToken}`)
-  //     .send({
-  //       columnId,
-  //       title: 'Task 1',
-  //       order: 1,
-  //     });
-  //   expect(response.status, url).to.equal(201);
-  //   const taskId = response.body.id;
-
-  //   url = `/tasks/${taskId}/subscribe`;
-  //   response = await supertest(app)
-  //     .put(url)
-  //     .set('Accept', 'application/json')
-  //     .set('Authorization', `Bearer ${memberUserAccessToken}`);
-  //   expect(response.status, url).to.equal(200);
-
-  //   url = `/tasks/${taskId}`;
-  //   response = await supertest(app)
-  //     .put(url)
-  //     .set('Accept', 'application/json')
-  //     .set('Authorization', `Bearer ${userAccessToken}`)
-  //     .send({
-  //       title: 'Updated task 1',
-  //       priority: 2,
-  //     });
-  //   expect(response.status, url).to.equal(200);
-
-  //   url = `/tasks/${taskId}`;
-  //   response = await supertest(app)
-  //     .put(url)
-  //     .set('Accept', 'application/json')
-  //     .set('Authorization', `Bearer ${userAccessToken}`)
-  //     .send({
-  //       assigneeId: userId,
-  //     });
-  //   expect(response.status, url).to.equal(200);
-
-  //   url = `/columns`;
-  //   response = await supertest(app)
-  //     .post(url)
-  //     .set('Accept', 'application/json')
-  //     .set('Authorization', `Bearer ${userAccessToken}`)
-  //     .send({
-  //       projectId,
-  //       title: 'Column 2',
-  //       order: 5,
-  //     });
-  //   expect(response.status, url).to.equal(201);
-  //   const secondColumnId = response.body.id;
-
-  //   url = `/tasks`;
-  //   response = await supertest(app)
-  //     .patch(url)
-  //     .set('Accept', 'application/json')
-  //     .set('Authorization', `Bearer ${userAccessToken}`)
-  //     .send([{ id: taskId, columnId: secondColumnId, order: 1 }]);
-  //   expect(response.status, url).to.equal(200);
-
-  //   url = `/tasks/${taskId}`;
-  //   response = await supertest(app)
-  //     .get(url)
-  //     .set('Accept', 'application/json')
-  //     .set('Authorization', `Bearer ${userAccessToken}`);
-  //   expect(response.status, url).to.equal(200);
-  //   console.log(response.body);
-
-  //   url = `/tasks/${taskId}`;
-  //   response = await supertest(app)
-  //     .delete(url)
-  //     .set('Accept', 'application/json')
-  //     .set('Authorization', `Bearer ${userAccessToken}`);
-  //   expect(response.status, url).to.equal(204);
-
-  //   url = `/tasks/${taskId}/subscribe`;
-  //   response = await supertest(app)
-  //     .delete(url)
-  //     .set('Accept', 'application/json')
-  //     .set('Authorization', `Bearer ${userAccessToken}`);
-  //   expect(response.status, url).to.equal(404);
-  // });
 });

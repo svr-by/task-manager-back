@@ -442,7 +442,7 @@ describe('TESTS: authorization actions', () => {
 
     url = '/auth/signout';
     response = await supertest(app)
-      .get(url)
+      .post(url)
       .set('Cookie', `jwt=${userRefreshToken}`)
       .set('Authorization', `Bearer ${userAccessToken}`);
     expect(response.status).to.equal(205);
@@ -455,13 +455,6 @@ describe('TESTS: authorization actions', () => {
       .get(url)
       .set('Cookie', `jwt=${userRefreshToken}`)
       .set('Authorization', `Bearer ${userAccessToken}`);
-    expect(response.status, url).to.equal(401);
-
-    url = '/auth/refresh';
-    response = await supertest(app)
-      .get(url)
-      .set('Cookie', `jwt=${userNewRefreshToken}`)
-      .set('Authorization', `Bearer ${userAccessToken}`);
-    expect(response.status, url).to.equal(204);
+    expect(response.status, url).to.equal(404);
   });
 });

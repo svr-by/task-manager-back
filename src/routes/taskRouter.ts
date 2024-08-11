@@ -22,7 +22,7 @@ taskRouter.patch('/', validateUpdateTaskSetParams(), updateTaskSet);
 taskRouter.get('/:id', validateParamId(), getTask);
 taskRouter.put('/:id', validateUpdateTaskParams(), updateTask);
 taskRouter.delete('/:id', validateParamId(), deleteTask);
-taskRouter.put('/:id/subscribe', validateParamId(), subscribeTask);
+taskRouter.post('/:id/subscribe', validateParamId(), subscribeTask);
 taskRouter.delete('/:id/subscribe', validateParamId(), unsubscribeTask);
 
 export default taskRouter;

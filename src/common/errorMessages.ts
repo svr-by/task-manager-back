@@ -19,9 +19,9 @@ export enum USER_ERR_MES {
   ACC_TKN_EXPIRED = 'Access token has expired',
   ACC_TKN_INVALID = 'Invalid access token',
   CONF_TKN_INVALID = 'Confirmation token is invalid',
-  CONF_USER_NOT_FOUND = 'The user with this token not found',
   RFR_TKN_INVALID = 'Invalid refresh token',
   TKN_MISMATCH = 'Token mismatch',
+  NAME_EPMTY = 'Name must not be empty',
   NAME_STRING = 'Name must be string',
   NAME_LENGTH = 'Name length is not valid',
   NAME_CHARS = 'Name chars is not valid',
@@ -34,6 +34,7 @@ export enum USER_ERR_MES {
   PWD_LENGTH = 'Password length is not valid',
   NOT_CONFIRMED = 'User has not confirmed the email',
   ACCESS_DENIED = 'Access to change other users is denied',
+  HAVE_PROJECTS = 'User have own projects',
 }
 
 export enum PROJECT_ERR_MES {

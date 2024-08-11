@@ -20,6 +20,8 @@ export const validateParamToken = () =>
 
 export const validateBodyName = () =>
   body('name')
+    .notEmpty()
+    .withMessage(USER_ERR_MES.NAME_EPMTY)
     .isString()
     .withMessage(USER_ERR_MES.NAME_STRING)
     .trim()
@@ -30,10 +32,10 @@ export const validateBodyName = () =>
 
 export const validateBodyEmail = () =>
   body('email')
-    .trim()
-    .toLowerCase()
     .notEmpty()
     .withMessage(USER_ERR_MES.EMAIL_EPMTY)
+    .trim()
+    .toLowerCase()
     .isEmail()
     .withMessage(USER_ERR_MES.EMAIL_INVALID);
 

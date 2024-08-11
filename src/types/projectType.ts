@@ -8,8 +8,8 @@ export interface IProject extends Document {
   title: string;
   ownerRef: Types.ObjectId | IUser;
   membersRef: Types.ObjectId[] | IUser[];
-  columns: IColumn[];
-  tasks: ITask[];
+  columns?: IColumn[];
+  tasks?: ITask[];
   tokens: string[];
   description?: string;
 }

@@ -56,7 +56,7 @@ export const confirmation = asyncErrorHandler(async (req: Request, res: Response
   }
   const user = await User.findById(decodedConfTkn.uid);
   if (!user) {
-    throw new NotFoundError(USER_ERR_MES.CONF_USER_NOT_FOUND);
+    throw new NotFoundError(USER_ERR_MES.NOT_FOUND);
   }
   user.isVerified = true;
   await user.save();
@@ -104,10 +104,10 @@ export const refresh = asyncErrorHandler(async (req: Request, res: Response) => 
   const user = await User.findById(decodedRfTkn.uid);
   if (!user || !user.tokens.includes(refreshToken)) {
     res.clearCookie(JWT_COOKIE_NAME, cookieOptions);
-    throw new AuthorizationError(USER_ERR_MES.NOT_FOUND);
+    throw new NotFoundError(USER_ERR_MES.NOT_FOUND);
   }
   const decodedAcTkn = decodeAccToken(accessToken, { ignoreExpiration: true });
-  if (decodedRfTkn.uid !== user._id?.toString() || decodedRfTkn.uid !== decodedAcTkn?.uid) {
+  if (decodedRfTkn.uid !== decodedAcTkn?.uid) {
     res.clearCookie(JWT_COOKIE_NAME, cookieOptions);
     throw new ForbiddenError(USER_ERR_MES.TKN_MISMATCH);
   }
@@ -119,7 +119,7 @@ export const refresh = asyncErrorHandler(async (req: Request, res: Response) => 
 export const signOut = asyncErrorHandler(async (req: Request, res: Response) => {
   const refreshToken = req.cookies?.[JWT_COOKIE_NAME];
   if (!refreshToken) {
-    return res.sendStatus(StatusCodes.RESET_CONTENT);
+    return res.sendStatus(StatusCodes.NO_CONTENT);
   }
   const decodedRfTkn = decodeRfrToken(refreshToken);
   if (decodedRfTkn) {
