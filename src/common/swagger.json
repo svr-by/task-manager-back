@@ -2,23 +2,41 @@
   "swagger": "2.0",
   "info": {
     "version": "0.1.0", 
-    "title": "ACSA backend",
-    "description": "Analytics and Control Sales App API",
+    "title": "Task manager",
+    "description": "Backend applications for task manager",
     "license": "ISC"
   },
-
   "tags": [
     {
       "name": "Auth",
-      "description": "API for signIn/signUp"
+      "description": "API for authorization"
+    },
+    {
+      "name": "User",
+      "description": "API for users"
+    },
+    {
+      "name": "Project",
+      "description": "API for projects"
+    },
+    {
+      "name": "Column",
+      "description": "API for columns"
+    },
+    {
+      "name": "Task",
+      "description": "API for tasks"
     }
   ],
-  "definitions" : {
+  "definitions": {
     "User": {
       "required": [
         "id",
         "name",
-        "email"
+        "email",
+        "isVerified",
+        "projects",
+        "ownProjects"
       ],
       "properties": {
         "id": {
@@ -30,9 +48,274 @@
         "email": {
           "type": "string"
         },
-        "notes": {
+        "isVerified": {
+          "type": "boolean"
+        },
+        "projects": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "title": {
+                "type": "string"
+              },
+              "ownerRef": {
+                "type": "string"
+              },
+              "membersRef": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "description": {
+                "type": "string"
+              }
+            }
+          } 
+        },
+        "ownProjects": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "title": {
+                "type": "string"
+              },
+              "ownerRef": {
+                "type": "string"
+              },
+              "membersRef": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "description": {
+                "type": "string"
+              }
+            }
+          } 
+        }
+      }
+    },
+    "Project": {
+      "required": [
+        "id",
+        "title",
+        "ownerRef",
+        "memberRefs",
+        "columns",
+        "tasks"
+      ],
+      "properties": {
+        "id": {
           "type": "string"
-        } 
+        },
+        "title": {
+          "type": "string"
+        },
+        "ownerRef": {
+          "type": "string"
+        },
+        "memberRefs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          } 
+        },
+        "description": {
+          "type": "string"
+        },    
+        "columns": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "title": {
+                "type": "string"
+              },
+              "projectRef": {
+                "type": "string"
+              },
+              "order": {
+                "type": "number"
+              }
+            }
+          } 
+        },   
+        "tasks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "title": {
+                "type": "string"
+              },
+              "projectRef": {
+                "type": "string"
+              },
+              "columnRef": {
+                "type": "string"
+              },
+              "assigneeRef": {
+                "type": "string"
+              },
+              "subscriberRefs": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "order": {
+                "type": "number"
+              },
+              "priority": {
+                "type": "number"
+              },
+              "description": {
+                "type": "string"
+              }
+            }
+          } 
+        }      
+      }
+    },
+    "Column": {
+      "required": [
+        "id",
+        "title",
+        "projectRef",
+        "order",
+        "tasks"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "projectRef": {
+          "type": "string"
+        },
+        "order": {
+          "type": "number"
+        },
+        "tasks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "title": {
+                "type": "string"
+              },
+              "projectRef": {
+                "type": "string"
+              },
+              "columnRef": {
+                "type": "string"
+              },
+              "assigneeRef": {
+                "type": "string"
+              },
+              "subscriberRefs": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "order": {
+                "type": "number"
+              },
+              "priority": {
+                "type": "number"
+              },
+              "description": {
+                "type": "string"
+              }
+            }
+          } 
+        }  
+      }
+    },
+    "Task": {
+      "required": [
+        "id",
+        "title",
+        "projectRef",
+        "columnRef",
+        "subscriberRefs",
+        "order"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "projectRef": {
+          "type": "string"
+        },
+        "columnRef": {
+          "type": "string"
+        },
+        "assigneeRef": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            },
+            "email": {
+              "type": "string"
+            }
+          }
+        },
+        "subscriberRefs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "email": {
+                "type": "string"
+              }
+            }
+          } 
+        },
+        "order": {
+          "type": "number"
+        },
+        "priority": {
+          "type": "number"
+        },
+        "description": {
+          "type": "string"
+        }
       }
     }
   },
@@ -50,8 +333,7 @@
     "/auth/signup": {
       "post": {
         "tags": ["Auth"],
-        "summary": "Sign up",
-        "description": "Create new user",
+        "description": "Create a new user",
         "parameters": [
           {
             "name": "user",
@@ -75,9 +357,9 @@
                 }       
               },
               "example": {
-                "name": "Elon Musk",
-                "email": "musk@tesla.com",
-                "password": "Tesla4ever"
+                "name": "Siarhei Rachkouski",
+                "email": "rachkouski@yandex.ru",
+                "password": "12345678"
               }
             }
             
@@ -89,12 +371,9 @@
             "description": "New user created",
             "schema": {
               "properties": {
-                "token": {
-                  "type": "string"
-                },
-                "id": {
-                  "type": "string"
-                }  
+                "isEmailSent": {
+                  "type": "boolean"
+                }
               }
             }
           },
@@ -107,11 +386,37 @@
         }
       }
     },
+    "/confirmation/{token}": {
+      "get": {
+        "tags": ["Auth"],
+        "description": "Confirm user email",
+        "parameters": [
+          {
+            "name": "token",
+            "in": "path",
+            "description": "Confirmation token from email",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "produces": ["application/json"],
+        "responses": {
+          "201": {
+            "description": "Email confirmation completed"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "User not found"
+          }
+        }
+      }
+    },
     "/auth/signin": {
       "post": {
         "tags": ["Auth"],
-        "summary": "Sign in",
-        "description": "Get access token",
+        "description": "Get user access token",
         "parameters": [
           {
             "name": "AuthInfo",
@@ -131,8 +436,8 @@
                 }       
               },
               "example": {
-                "email": "musk@tesla.com",
-                "password": "Tesla4ever"
+                "email": "rachkouski@yandex.ru",
+                "password": "12345678"
               }
             }
           }
@@ -146,8 +451,22 @@
                 "token": {
                   "type": "string"
                 },
-                "id": {
-                  "type": "string"
+                "user": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "email": {
+                      "type": "string"
+                    },
+                    "isVerified": {
+                      "type": "boolean"
+                    },
+                    "id": {
+                      "type": "string"
+                    }
+                  }
                 }  
               }
             }
@@ -157,19 +476,9 @@
           },
           "401": {
             "description": "Authorization error"
-          }
-        }
-      }
-    },
-    "/auth/signout": {
-      "get": {
-        "tags": ["Auth"],
-        "summary": "Sign out",
-        "description": "Clear refresh token",
-        "produces": ["application/json"],
-        "responses": {
-          "205": {
-            "description": "Reset Content"
+          },
+          "404": {
+            "description": "User not found"
           }
         }
       }
@@ -182,8 +491,7 @@
           }
         ],
         "tags": ["Auth"],
-        "summary": "Refresh tokens",
-        "description": "Get a new access token",
+        "description": "Refresh tokens",
         "produces": ["application/json"],
         "responses": {
           "201": {
@@ -193,17 +501,1404 @@
                 "token": {
                   "type": "string"
                 },
-                "id": {
-                  "type": "string"
+                "user": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "email": {
+                      "type": "string"
+                    },
+                    "isVerified": {
+                      "type": "boolean"
+                    },
+                    "id": {
+                      "type": "string"
+                    }
+                  }
                 }  
               }
             }
+          },
+          "204": {
+            "description": "No Content"
           },
           "401": {
             "description": "Authorization error"
           },
           "403": {
-            "description": "Forbidden "
+            "description": "Token mismatch"
+          },
+          "404": {
+            "description": "User not found"
+          }
+        }
+      }
+    },
+    "/auth/signout": {
+      "post": {
+        "security": [
+          {
+             "Bearer": []
+          }
+        ],
+        "tags": ["Auth"],
+        "description": "Clear refresh token",
+        "produces": ["application/json"],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "205": {
+            "description": "Reset Content"
+          }
+        }
+      }
+    },
+    "/users": {
+      "get": {
+        "security": [
+          {
+             "Bearer": []
+          }
+        ],
+        "tags": ["User"],
+        "description": "Get all users",
+        "produces": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "All users",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string"
+                  },
+                  "isVerified": {
+                    "type": "boolean"
+                  },
+                  "id": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },  
+    "/users/{userId}": {
+      "get": {
+        "security": [
+          {
+             "Bearer": []
+          }
+        ],
+        "tags": ["User"],
+        "description": "Get information about user",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "description": "User ID",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User info",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "User not found"
+          }
+        }
+      },
+      "put": {
+        "security": [
+          {
+             "Bearer": []
+          }
+        ],
+        "tags": ["User"],
+        "description": "Update user. Only himself",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "description": "User ID",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "params",
+            "description": "Updated params",
+            "in": "body",
+            "schema": {
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "password": {
+                  "type": "string"
+                }       
+              },
+              "example": {
+                "name": "Elon Musk",
+                "password": "87654321"
+              }
+            }
+            
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Updated user",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Access to change other users is denied"
+          },
+          "404": {
+            "description": "User not found"
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+             "Bearer": []
+          }
+        ],
+        "tags": ["User"],
+        "description": "Delete project. Only for owners",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "description": "User ID",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Access to change other users is denied"
+          }
+        }
+      }
+    }, 
+    "/projects": {
+      "post": {
+        "security": [
+          {
+             "Bearer": []
+          }
+        ],
+        "tags": ["Project"],
+        "description": "Create a new project",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "New project params",
+            "in": "body",
+            "description": "New project params",
+            "schema": {
+              "required": [
+                "title",
+                "description"
+              ],
+              "properties": {
+                "title": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                }      
+              },
+              "example": {
+                "title": "Квартальный план",
+                "description": "План закупок на 4й квартал"
+              }
+            }
+            
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created project",
+            "schema": {
+              "properties": {
+                "title": {
+                  "type": "string"
+                },
+                "ownerRef": {
+                  "type": "string"
+                },
+                "memberRefs": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "description": {
+                  "type": "string"
+                },
+                "id": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "409": {
+            "description": "Title of the project must not be repeated"
+          }
+        }
+      },
+      "get": {
+        "security": [
+          {
+             "Bearer": []
+          }
+        ],
+        "tags": ["Project"],
+        "description": "Get all projects",
+        "produces": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "All projects",
+            "schema": {
+              "type": "array",
+              "items": {
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  },
+                  "id": {
+                    "type": "string"
+                  } 
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },  
+    "/projects/{projectId}": {
+      "get": {
+        "security": [
+          {
+             "Bearer": []
+          }
+        ],
+        "tags": ["Project"],
+        "description": "Get information about a project. Only for members",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "path",
+            "description": "Project ID",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Project info",
+            "schema": {
+              "$ref": "#/definitions/Project"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Access to the project is denied"
+          },
+          "404": {
+            "description": "Project not found"
+          }
+        }
+      },
+      "put": {
+        "security": [
+          {
+             "Bearer": []
+          }
+        ],
+        "tags": ["Project"],
+        "description": "Update project. Only for owners",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "path",
+            "description": "Project ID",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "params",
+            "description": "Updated params",
+            "in": "body",
+            "schema": {
+              "properties": {
+                "title": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                }       
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Updated project",
+            "schema": {
+              "$ref": "#/definitions/Project"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Project not found or access denied"
+          },
+          "409": {
+            "description": "Title of the project must not be repeated"
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+             "Bearer": []
+          }
+        ],
+        "tags": ["Project"],
+        "description": "Delete project. Only for owners",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "path",
+            "description": "Project ID",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Project not found or access denied"
+          }
+        }
+      }
+    }, 
+    "/projects/{projectId}/member": {
+      "post": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "tags": ["Project"],
+        "description": "Send an invitation to become the member of the project. Only for owners",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "path",
+            "description": "Project ID",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "email",
+            "in": "body",
+            "description": "User email",
+            "schema": {
+              "required": [
+                "email"
+              ],
+              "properties": {
+                "email": {
+                  "type": "string"
+                }      
+              },
+              "example": {
+                "email": "user@yandex.ru"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Invitation token created",
+            "schema": {
+              "properties": {
+                "isEmailSent": {
+                  "type": "boolean"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Project not found or access denied"
+          },
+          "404": {
+            "description": "User not found or not verified"
+          }
+        }
+      }
+    },
+    "/projects/{projectId}/member/{token}": {
+      "get": {
+        "security": [
+          {
+             "Bearer": []
+          }
+        ],
+        "tags": ["Project"],
+        "description": "Accept the invitation to become the project member",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "path",
+            "description": "Project ID",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "token",
+            "in": "path",
+            "description": "Invitation token",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Project member has been added"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Incorrect invite token"
+          },
+          "404": {
+            "description": "Project not found"
+          }
+        }
+      }
+    },
+    "/projects/{projectId}/member/{userId}": {
+      "delete": {
+        "security": [
+          {
+             "Bearer": []
+          }
+        ],
+        "tags": ["Project"],
+        "description": "Remove a user from a project",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "path",
+            "description": "Project ID",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "userId",
+            "in": "path",
+            "description": "Member ID",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Member removed"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Project not found or access denied"
+          },
+          "404": {
+            "description": "Member not found"
+          }
+        }
+      }
+    }, 
+    "/projects/{projectId}/owner": {
+      "post": {
+        "security": [
+          {
+             "Bearer": []
+          }
+        ],
+        "tags": ["Project"],
+        "description": "Send invitation to become the owner of the project. Only for owner",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "path",
+            "description": "Project ID",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "email",
+            "in": "body",
+            "description": "User email",
+            "schema": {
+              "required": [
+                "email"
+              ],
+              "properties": {
+                "email": {
+                  "type": "string"
+                }      
+              },
+              "example": {
+                "email": "user@yandex.ru"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Invitation token created",
+            "schema": {
+              "properties": {
+                "isEmailSent": {
+                  "type": "boolean"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Project not found or access denied"
+          },
+          "404": {
+            "description": "User not found or not verified"
+          }
+        }
+      }
+    }, 
+    "/projects/{projectId}/owner/{token}": {
+      "get": {
+        "security": [
+          {
+             "Bearer": []
+          }
+        ],
+        "tags": ["Project"],
+        "description": "Accept the invitation to become the project owner",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "path",
+            "description": "Project ID",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "token",
+            "in": "path",
+            "description": "Invitation token",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Project owner has been changed"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Incorrect invite token"
+          },
+          "404": {
+            "description": "Project not found"
+          }
+        }
+      }
+    },
+    "/columns": {
+      "post": {
+        "security": [
+          {
+             "Bearer": []
+          }
+        ],
+        "tags": ["Column"],
+        "description": "Create a new column",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "New column params",
+            "in": "body",
+            "description": "New column params",
+            "schema": {
+              "required": [
+                "title",
+                "projectId",
+                "order"
+              ],
+              "properties": {
+                "title": {
+                  "type": "string"
+                },
+                "projectId": {
+                  "type": "string"
+                },
+                "order": {
+                  "type": "number"
+                }      
+              },
+              "example": {
+                "title": "В доставке",
+                "projectId": "",
+                "order": 4
+              }
+            }
+            
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created project",
+            "schema": {
+              "properties": {
+                "title": {
+                  "type": "string"
+                },
+                "projectRef": {
+                  "type": "string"
+                },
+                "order": {
+                  "type": "number"
+                },
+                "id": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Access to the project is denied"
+          },
+          "404": {
+            "description": "Project not found"
+          },
+          "409": {
+            "description": "Title of the column must not be repeated"
+          }
+        }
+      },
+      "patch": {
+        "security": [
+          {
+             "Bearer": []
+          }
+        ],
+        "tags": ["Column"],
+        "description": "Update order of columns",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "params",
+            "description": "Updated columns",
+            "in": "body",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "order": {
+                    "type": "number"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Updated columns",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  },
+                  "projectRef": {
+                    "type": "string"
+                  },
+                  "order": {
+                    "type": "number"
+                  },
+                  "id": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Access to the project is denied"
+          },
+          "404": {
+            "description": "Column not found"
+          }
+        }
+      }
+    },  
+    "/columns/{columnId}": {
+      "get": {
+        "security": [
+          {
+             "Bearer": []
+          }
+        ],
+        "tags": ["Column"],
+        "description": "Get information about column",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "columnId",
+            "in": "path",
+            "description": "Column ID",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Column info",
+            "schema": {
+              "$ref": "#/definitions/Column"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Access to the project is denied"
+          },
+          "404": {
+            "description": "Column not found"
+          }
+        }
+      },
+      "put": {
+        "security": [
+          {
+             "Bearer": []
+          }
+        ],
+        "tags": ["Column"],
+        "description": "Update column",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "columnId",
+            "in": "path",
+            "description": "Column ID",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "params",
+            "description": "Updated params",
+            "in": "body",
+            "schema": {
+              "properties": {
+                "title": {
+                  "type": "string"
+                }     
+              }
+            }
+            
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Updated column",
+            "schema": {
+              "$ref": "#/definitions/Column"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Access to the project is denied"
+          },
+          "404": {
+            "description": "Column not found"
+          },
+          "409": {
+            "description": "Title of the column must not be repeated"
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+             "Bearer": []
+          }
+        ],
+        "tags": ["Column"],
+        "description": "Delete column",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "columnId",
+            "in": "path",
+            "description": "Column ID",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Access to the project is denied"
+          },
+          "404": {
+            "description": "Column not found"
+          }
+        }
+      }
+    },
+    "/tasks": {
+      "post": {
+        "security": [
+          {
+             "Bearer": []
+          }
+        ],
+        "tags": ["Task"],
+        "description": "Create a new task",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "New task params",
+            "in": "body",
+            "description": "New task params",
+            "schema": {
+              "required": [
+                "title",
+                "columnId",
+                "order"
+              ],
+              "properties": {
+                "title": {
+                  "type": "string"
+                },
+                "columnId": {
+                  "type": "string"
+                },
+                "order": {
+                  "type": "number"
+                },  
+                "assigneeId": {
+                  "type": "string"
+                }, 
+                "priority": {
+                  "type": "number"
+                },     
+                "description": {
+                  "type": "string"
+                }      
+              },
+              "example": {
+                "title": "Купить материалы по заявке 21",
+                "columnId": "",
+                "order": 1
+              }
+            }
+            
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created task",
+            "schema": {
+              "properties": {
+                "title": {
+                  "type": "string"
+                },
+                "projectRef": {
+                  "type": "string"
+                },
+                "columnRef": {
+                  "type": "string"
+                },
+                "assigneeRef": {
+                  "type": "string"
+                },
+                "subscriberRefs": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "order": {
+                  "type": "number"
+                },
+                "priority": {
+                  "type": "number"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "id": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Access to the project is denied"
+          },
+          "404": {
+            "description": "Columnn not found"
+          },
+          "409": {
+            "description": "Order or title of the task must not be repeated"
+          }
+        }
+      },
+      "patch": {
+        "security": [
+          {
+             "Bearer": []
+          }
+        ],
+        "tags": ["Task"],
+        "description": "Update order of tasks",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "params",
+            "description": "Updated tasks",
+            "in": "body",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "columnId": {
+                    "type": "string"
+                  },
+                  "order": {
+                    "type": "number"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Updated tasks",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  },
+                  "projectRef": {
+                    "type": "string"
+                  },
+                  "columnRef": {
+                    "type": "string"
+                  },
+                  "assigneeRef": {
+                    "type": "string"
+                  },
+                  "subscriberRefs": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "order": {
+                    "type": "number"
+                  },
+                  "priority": {
+                    "type": "number"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "id": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Access to the project is denied"
+          },
+          "404": {
+            "description": "Task not found"
+          }
+        }
+      }
+    },  
+    "/tasks/{taskId}": {
+      "get": {
+        "security": [
+          {
+             "Bearer": []
+          }
+        ],
+        "tags": ["Task"],
+        "description": "Get information about task",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "taskId",
+            "in": "path",
+            "description": "Task ID",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Task info",
+            "schema": {
+              "$ref": "#/definitions/Task"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Access to the project is denied"
+          },
+          "404": {
+            "description": "Task not found"
+          }
+        }
+      },
+      "put": {
+        "security": [
+          {
+             "Bearer": []
+          }
+        ],
+        "tags": ["Task"],
+        "description": "Update task",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "taskId",
+            "in": "path",
+            "description": "Task ID",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "params",
+            "description": "Updated params",
+            "in": "body",
+            "schema": {
+              "properties": {
+                "title": {
+                  "type": "string"
+                },
+                "assigneeId": {
+                  "type": "string"
+                },
+                "priority": {
+                  "type": "number"
+                },
+                "description": {
+                  "type": "string"
+                }
+              }
+            }
+            
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Updated task",
+            "schema": {
+              "$ref": "#/definitions/Task"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Access to the project is denied"
+          },
+          "404": {
+            "description": "Task not found"
+          },
+          "409": {
+            "description": "Order or title of the task must not be repeated"
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+             "Bearer": []
+          }
+        ],
+        "tags": ["Task"],
+        "description": "Delete task",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "taskId",
+            "in": "path",
+            "description": "Task ID",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Access to the project is denied"
+          },
+          "404": {
+            "description": "Task not found"
+          }
+        }
+      }
+    },
+    "/tasks/{taskId}/subscribe": {
+      "post": {
+        "security": [
+          {
+             "Bearer": []
+          }
+        ],
+        "tags": ["Task"],
+        "description": "Subscribe to task",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "taskId",
+            "in": "path",
+            "description": "Task ID",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Subscription completed successfully"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Access to the project is denied"
+          },
+          "404": {
+            "description": "Task not found"
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+             "Bearer": []
+          }
+        ],
+        "tags": ["Task"],
+        "description": "Unsubscribe from task",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "taskId",
+            "in": "path",
+            "description": "Task ID",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Subscription cancellation completed"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Access to the project is denied"
+          },
+          "404": {
+            "description": "Task not found"
           }
         }
       }
