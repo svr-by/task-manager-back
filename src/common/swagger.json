@@ -386,7 +386,7 @@
         }
       }
     },
-    "/confirmation/{token}": {
+    "/auth/confirmation/{token}": {
       "get": {
         "tags": ["Auth"],
         "description": "Confirm user email",

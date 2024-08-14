@@ -9,7 +9,7 @@ export enum COMMON_ERR_MES {
   TITLE_CHARS = 'Title chars is not valid',
   DESC_STRING = 'Description must be string',
   DESC_LENGTH = 'Description length is not valid',
-  TOKEN_STRING = 'Token must be string',
+  TOKEN_STRING = 'Token must be jwt string',
   TOKEN_EMPTY = 'Token must not be empty',
   ORDER_VALUE = 'Order must be positive number',
 }
