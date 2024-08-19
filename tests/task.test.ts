@@ -760,7 +760,7 @@ describe('TESTS: task actions', () => {
     expect(task.description, url).to.equal('Very important task');
   });
 
-  it('should update a column with validate all params', async () => {
+  it('should update a task with validate all params', async () => {
     url = `/tasks`;
     response = await supertest(app)
       .post(url)
@@ -949,7 +949,7 @@ describe('TESTS: task actions', () => {
     expect(response.status, url).to.equal(400);
   });
 
-  it('should forbidden update a column without access to the project', async () => {
+  it('should forbidden update a task without access to the project', async () => {
     url = `/tasks`;
     response = await supertest(app)
       .post(url)

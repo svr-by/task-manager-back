@@ -11,12 +11,7 @@ export const validateParamUserId = () =>
   param('userId').isMongoId().withMessage(COMMON_ERR_MES.USER_ID_INVALID);
 
 export const validateParamToken = () =>
-  param('token')
-    .isString()
-    .withMessage(COMMON_ERR_MES.TOKEN_STRING)
-    .trim()
-    .notEmpty()
-    .withMessage(COMMON_ERR_MES.TOKEN_EMPTY);
+  param('token').isJWT().withMessage(COMMON_ERR_MES.TOKEN_STRING);
 
 export const validateBodyName = () =>
   body('name')

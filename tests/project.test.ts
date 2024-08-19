@@ -1052,7 +1052,7 @@ describe('TESTS: project actions', () => {
       .set('Accept', 'application/json')
       .set('Authorization', `Bearer ${memberUserAccessToken}`);
     expect(response.status, url).to.equal(400);
-    expect(response.text, url).to.equal(PROJECT_ERR_MES.INV_TKN_EXPIRED);
+    expect(response.text, url).to.equal(COMMON_ERR_MES.TOKEN_STRING);
   });
 
   it('should accept member only with relevant id', async () => {
@@ -1501,7 +1501,7 @@ describe('TESTS: project actions', () => {
       .set('Accept', 'application/json')
       .set('Authorization', `Bearer ${memberUserAccessToken}`);
     expect(response.status, url).to.equal(400);
-    expect(response.text, url).to.equal(PROJECT_ERR_MES.INV_TKN_EXPIRED);
+    expect(response.text, url).to.equal(COMMON_ERR_MES.TOKEN_STRING);
   });
 
   it('should accept owner only with relevant id', async () => {

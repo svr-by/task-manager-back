@@ -167,9 +167,10 @@ export const updateTaskSet = asyncErrorHandler(
         tasksBuffer.push(task);
       }
     }
-    await Promise.all(tasksBuffer.map((task) => task.save()));
+
     if (NODE_ENV !== 'test') {
       for (const task of tasksBuffer) {
+        if (!task.isModified('columnRef')) continue;
         await task.populate('assigneeRef subscriberRefs', 'name email');
         if (task.subscriberRefs.length) {
           const taskUrl = `http://${req.headers.host}/tasks/${task._id}`;
@@ -181,6 +182,7 @@ export const updateTaskSet = asyncErrorHandler(
         }
       }
     }
+    await Promise.all(tasksBuffer.map((task) => task.save()));
     res.json(tasksBuffer);
   }
 );
