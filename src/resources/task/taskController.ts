@@ -7,12 +7,7 @@ import { IUser } from '@/types/userType';
 import { asyncErrorHandler, validationErrorHandler } from '@/services/errorService';
 import { sendUpdateTaskEmail, sendDeleteTaskEmail } from '@/services/emailService';
 import { createDbId } from '@/services/databaseService';
-import {
-  EntityExistsError,
-  NotFoundError,
-  ForbiddenError,
-  BadRequestError,
-} from '@/common/appError';
+import { ConflictError, NotFoundError, ForbiddenError, BadRequestError } from '@/common/appError';
 import { COLUMN_ERR_MES, PROJECT_ERR_MES, TASK_ERR_MES } from '@/common/errorMessages';
 import config from '@/common/config';
 import Column from '@/resources/column/columnModel';
@@ -52,7 +47,7 @@ export const createTask = asyncErrorHandler(
       throw new ForbiddenError(TASK_ERR_MES.NUMBER_EXCEEDED);
     }
     if (duplTask) {
-      throw new EntityExistsError(TASK_ERR_MES.REPEATED);
+      throw new ConflictError(TASK_ERR_MES.REPEATED);
     }
     const newTask = await Task.create({
       title,
@@ -102,7 +97,7 @@ export const updateTask = asyncErrorHandler(
     if (title) {
       const duplTask = await Task.findOne({ projectRef: task.projectRef, title });
       if (duplTask) {
-        throw new EntityExistsError(TASK_ERR_MES.REPEATED);
+        throw new ConflictError(TASK_ERR_MES.REPEATED);
       }
     }
     if (assigneeId) {
@@ -139,7 +134,7 @@ export const updateTaskSet = asyncErrorHandler(
     const tasksBuffer: ITask[] = [];
     let projectId;
     for (const updatedTask of update) {
-      const { id, columnId, order } = updatedTask;
+      const { id, columnId, prevColumnId, order, prevOrder } = updatedTask;
       const duplTask = tasksBuffer.find(
         (task) =>
           task._id.toString() === id ||
@@ -152,6 +147,9 @@ export const updateTaskSet = asyncErrorHandler(
       if (!task) {
         throw new NotFoundError(TASK_ERR_MES.NOT_FOUND);
       }
+      if (task.order !== prevOrder || task.columnRef.toString() !== prevColumnId) {
+        throw new ConflictError(TASK_ERR_MES.NOT_RELEVANT);
+      }
       if (!projectId) {
         projectId = task.projectRef.toString();
         const hasAccess = await task.checkUserAccess(userId);
@@ -160,6 +158,15 @@ export const updateTaskSet = asyncErrorHandler(
         }
       } else if (task.projectRef.toString() !== projectId) {
         throw new BadRequestError(TASK_ERR_MES.SAME_PROJECT);
+      }
+      if (columnId !== prevColumnId) {
+        const newColumn = await Column.findById(columnId);
+        if (!newColumn) {
+          throw new NotFoundError(COLUMN_ERR_MES.NOT_FOUND);
+        }
+        if (newColumn.projectRef.toString() !== projectId) {
+          throw new BadRequestError(TASK_ERR_MES.SAME_PROJECT);
+        }
       }
       if (task.order !== order || task.columnRef.toString() !== columnId) {
         task.order = order;

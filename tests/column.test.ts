@@ -832,6 +832,7 @@ describe('TESTS: column actions', () => {
         {
           // id: firstColumnId,
           order: 5,
+          prevOrder: 4,
         },
       ]);
     expect(response.status, url).to.equal(400);
@@ -845,6 +846,7 @@ describe('TESTS: column actions', () => {
         {
           id: 'firstColumnId',
           order: 5,
+          prevOrder: 4,
         },
       ]);
     expect(response.status, url).to.equal(400);
@@ -858,6 +860,7 @@ describe('TESTS: column actions', () => {
         {
           id: {},
           order: 5,
+          prevOrder: 4,
         },
       ]);
     expect(response.status, url).to.equal(400);
@@ -871,6 +874,7 @@ describe('TESTS: column actions', () => {
         {
           id: firstColumnId,
           order: 'string',
+          prevOrder: 4,
         },
       ]);
     expect(response.status, url).to.equal(400);
@@ -884,6 +888,7 @@ describe('TESTS: column actions', () => {
         {
           id: firstColumnId,
           order: {},
+          prevOrder: 4,
         },
       ]);
     expect(response.status, url).to.equal(400);
@@ -897,6 +902,49 @@ describe('TESTS: column actions', () => {
         {
           id: firstColumnId,
           order: -1,
+          prevOrder: 4,
+        },
+      ]);
+    expect(response.status, url).to.equal(400);
+
+    url = `/columns`;
+    response = await supertest(app)
+      .patch(url)
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${userAccessToken}`)
+      .send([
+        {
+          id: firstColumnId,
+          order: 5,
+          prevOrder: 'string',
+        },
+      ]);
+    expect(response.status, url).to.equal(400);
+
+    url = `/columns`;
+    response = await supertest(app)
+      .patch(url)
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${userAccessToken}`)
+      .send([
+        {
+          id: firstColumnId,
+          order: 5,
+          prevOrder: {},
+        },
+      ]);
+    expect(response.status, url).to.equal(400);
+
+    url = `/columns`;
+    response = await supertest(app)
+      .patch(url)
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${userAccessToken}`)
+      .send([
+        {
+          id: firstColumnId,
+          order: 5,
+          prevOrder: -1,
         },
       ]);
     expect(response.status, url).to.equal(400);
@@ -935,8 +983,8 @@ describe('TESTS: column actions', () => {
       .set('Accept', 'application/json')
       .set('Authorization', `Bearer ${anotherUserAccessToken}`)
       .send([
-        { id: firstColumnId, order: 5 },
-        { id: secondColumnId, order: 4 },
+        { id: firstColumnId, order: 5, prevOrder: 4 },
+        { id: secondColumnId, order: 4, prevOrder: 5 },
       ]);
     expect(response.status, url).to.equal(403);
   });
@@ -985,8 +1033,8 @@ describe('TESTS: column actions', () => {
       .set('Accept', 'application/json')
       .set('Authorization', `Bearer ${userAccessToken}`)
       .send([
-        { id: firstColumnId, order: 5 },
-        { id: secondColumnId, order: 4 },
+        { id: firstColumnId, order: 5, prevOrder: 4 },
+        { id: secondColumnId, order: 4, prevOrder: 5 },
       ]);
     expect(response.status, url).to.equal(400);
   });
@@ -1024,8 +1072,8 @@ describe('TESTS: column actions', () => {
       .set('Accept', 'application/json')
       .set('Authorization', `Bearer ${userAccessToken}`)
       .send([
-        { id: firstColumnId, order: 5 },
-        { id: firstColumnId, order: 4 },
+        { id: firstColumnId, order: 5, prevOrder: 4 },
+        { id: firstColumnId, order: 4, prevOrder: 5 },
       ]);
     expect(response.status, url).to.equal(400);
 
@@ -1035,10 +1083,49 @@ describe('TESTS: column actions', () => {
       .set('Accept', 'application/json')
       .set('Authorization', `Bearer ${userAccessToken}`)
       .send([
-        { id: firstColumnId, order: 5 },
-        { id: secondColumnId, order: 5 },
+        { id: firstColumnId, order: 5, prevOrder: 4 },
+        { id: secondColumnId, order: 5, prevOrder: 5 },
       ]);
     expect(response.status, url).to.equal(400);
+  });
+
+  it('should not update set of column with wrong prev order', async () => {
+    url = `/columns`;
+    response = await supertest(app)
+      .post(url)
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${userAccessToken}`)
+      .send({
+        projectId,
+        title: 'Column 1',
+        order: 4,
+      });
+    expect(response.status, url).to.equal(201);
+    const firstColumnId = response.body.id;
+
+    url = `/columns`;
+    response = await supertest(app)
+      .post(url)
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${userAccessToken}`)
+      .send({
+        projectId,
+        title: 'Column 2',
+        order: 5,
+      });
+    expect(response.status, url).to.equal(201);
+    const secondColumnId = response.body.id;
+
+    url = `/columns`;
+    response = await supertest(app)
+      .patch(url)
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${userAccessToken}`)
+      .send([
+        { id: firstColumnId, order: 5, prevOrder: 4 },
+        { id: secondColumnId, order: 4, prevOrder: 1 },
+      ]);
+    expect(response.status, url).to.equal(409);
   });
 
   it('should update set of column', async () => {
@@ -1074,8 +1161,8 @@ describe('TESTS: column actions', () => {
       .set('Accept', 'application/json')
       .set('Authorization', `Bearer ${userAccessToken}`)
       .send([
-        { id: firstColumnId, order: 5 },
-        { id: secondColumnId, order: 4 },
+        { id: firstColumnId, order: 5, prevOrder: 4 },
+        { id: secondColumnId, order: 4, prevOrder: 5 },
       ]);
     expect(response.status, url).to.equal(200);
 

@@ -12,12 +12,7 @@ import { sendInvMemberEmail, sendInvOwnerEmail } from '@/services/emailService';
 import { decodeInvMemberToken, decodeInvOwnerToken } from '@/services/tokenService';
 import { createDbId } from '@/services/databaseService';
 import { PROJECT_ERR_MES, USER_ERR_MES } from '@/common/errorMessages';
-import {
-  EntityExistsError,
-  NotFoundError,
-  ForbiddenError,
-  BadRequestError,
-} from '@/common/appError';
+import { ConflictError, NotFoundError, ForbiddenError, BadRequestError } from '@/common/appError';
 import config from '@/common/config';
 import User from '@/resources/user/userModel';
 import Column from '@/resources/column/columnModel';
@@ -32,7 +27,7 @@ export const createProject = asyncErrorHandler(
     const { title, description } = req.body;
     const duplProject = await Project.findOne({ title });
     if (duplProject) {
-      throw new EntityExistsError(PROJECT_ERR_MES.REPEATED);
+      throw new ConflictError(PROJECT_ERR_MES.REPEATED);
     }
     const userId = req.userId;
     const newProject = await Project.create({ title, ownerRef: userId, description });
@@ -77,7 +72,7 @@ export const updateProject = asyncErrorHandler(
     if (title) {
       const duplProject = await Project.findOne({ title });
       if (duplProject) {
-        throw new EntityExistsError(PROJECT_ERR_MES.REPEATED);
+        throw new ConflictError(PROJECT_ERR_MES.REPEATED);
       }
     }
     const updatedProject = await Project.findOneAndUpdate(

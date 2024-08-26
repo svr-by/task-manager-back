@@ -24,7 +24,7 @@ export class BadRequestError extends AppError {
   }
 }
 
-export class EntityExistsError extends AppError {
+export class ConflictError extends AppError {
   constructor(message: string) {
     super(message);
     this.status = StatusCodes.CONFLICT;

@@ -29,5 +29,7 @@ export const validateUpdateTaskSetParams = () => [
   body('*').isObject().withMessage(TASK_ERR_MES.UPDATE_OBJECT),
   body('*.id').isMongoId().withMessage(TASK_ERR_MES.ID_INVALID),
   body('*.columnId').isMongoId().withMessage(COLUMN_ERR_MES.ID_INVALID),
+  body('*.prevColumnId').isMongoId().withMessage(COLUMN_ERR_MES.ID_INVALID),
   body('*.order').isInt({ min: 0 }).withMessage(TASK_ERR_MES.UPDATE_ORDER),
+  body('*.prevOrder').isInt({ min: 0 }).withMessage(TASK_ERR_MES.UPDATE_ORDER),
 ];

@@ -12,7 +12,7 @@ import {
   decodeAccToken,
 } from '@/services/tokenService';
 import {
-  EntityExistsError,
+  ConflictError,
   BadRequestError,
   NotFoundError,
   AuthorizationError,
@@ -31,7 +31,7 @@ export const signUp = asyncErrorHandler(
     const { name, email, password } = req.body;
     const duplicateUser = await User.findOne({ email });
     if (duplicateUser) {
-      throw new EntityExistsError(USER_ERR_MES.EMAIL_EXIST);
+      throw new ConflictError(USER_ERR_MES.EMAIL_EXIST);
     }
     const newUser = await User.create({ name, email, password });
     const confToken = getConfToken({ uid: newUser._id.toString() });

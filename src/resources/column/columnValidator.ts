@@ -20,4 +20,5 @@ export const validateUpdateColumnSetParams = () => [
   body('*').isObject().withMessage(COLUMN_ERR_MES.UPDATE_OBJECT),
   body('*.id').isMongoId().withMessage(COLUMN_ERR_MES.ID_INVALID),
   body('*.order').isInt({ min: 0 }).withMessage(COLUMN_ERR_MES.UPDATE_ORDER),
+  body('*.prevOrder').isInt({ min: 0 }).withMessage(COLUMN_ERR_MES.UPDATE_ORDER),
 ];

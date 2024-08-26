@@ -6,6 +6,7 @@ import { expect } from 'chai';
 
 import app from '@/app';
 import config from '@/common/config';
+import { TASK_ERR_MES } from '@/common/errorMessages';
 import { ownerUserMock, memberUserMock, anotherUserMock } from './common/mocks';
 import { NON_EXISTING_ID, NOT_VALID_ID } from './common/constants';
 
@@ -1212,7 +1213,9 @@ describe('TESTS: task actions', () => {
         {
           // id: firstTaskId,
           columnId,
+          prevColumnId: columnId,
           order: 3,
+          prevOrder: 1,
         },
       ]);
     expect(response.status, url).to.equal(400);
@@ -1226,7 +1229,9 @@ describe('TESTS: task actions', () => {
         {
           id: 'firstTaskId',
           columnId,
-          order: 5,
+          prevColumnId: columnId,
+          order: 3,
+          prevOrder: 1,
         },
       ]);
     expect(response.status, url).to.equal(400);
@@ -1240,7 +1245,9 @@ describe('TESTS: task actions', () => {
         {
           id: {},
           columnId,
-          order: 5,
+          prevColumnId: columnId,
+          order: 3,
+          prevOrder: 1,
         },
       ]);
     expect(response.status, url).to.equal(400);
@@ -1254,7 +1261,9 @@ describe('TESTS: task actions', () => {
         {
           id: firstTaskId,
           // columnId,
+          prevColumnId: columnId,
           order: 3,
+          prevOrder: 1,
         },
       ]);
     expect(response.status, url).to.equal(400);
@@ -1268,7 +1277,9 @@ describe('TESTS: task actions', () => {
         {
           id: firstTaskId,
           columnId: 'columnId',
-          order: 5,
+          prevColumnId: columnId,
+          order: 3,
+          prevOrder: 1,
         },
       ]);
     expect(response.status, url).to.equal(400);
@@ -1282,7 +1293,9 @@ describe('TESTS: task actions', () => {
         {
           id: firstTaskId,
           columnId: {},
-          order: 5,
+          prevColumnId: columnId,
+          order: 3,
+          prevOrder: 1,
         },
       ]);
     expect(response.status, url).to.equal(400);
@@ -1297,6 +1310,8 @@ describe('TESTS: task actions', () => {
           id: firstTaskId,
           columnId,
           order: 'string',
+          prevColumnId: columnId,
+          prevOrder: 1,
         },
       ]);
     expect(response.status, url).to.equal(400);
@@ -1311,6 +1326,8 @@ describe('TESTS: task actions', () => {
           id: firstTaskId,
           columnId,
           order: {},
+          prevColumnId: columnId,
+          prevOrder: 1,
         },
       ]);
     expect(response.status, url).to.equal(400);
@@ -1325,6 +1342,8 @@ describe('TESTS: task actions', () => {
           id: firstTaskId,
           columnId,
           order: -1,
+          prevColumnId: columnId,
+          prevOrder: 1,
         },
       ]);
     expect(response.status, url).to.equal(400);
@@ -1363,25 +1382,25 @@ describe('TESTS: task actions', () => {
       .set('Accept', 'application/json')
       .set('Authorization', `Bearer ${anotherUserAccessToken}`)
       .send([
-        { id: firstTaskId, columnId, order: 2 },
-        { id: secondTaskId, columnId, order: 1 },
+        { id: firstTaskId, columnId, prevColumnId: columnId, order: 2, prevOrder: 1 },
+        { id: secondTaskId, columnId, prevColumnId: columnId, order: 1, prevOrder: 2 },
       ]);
     expect(response.status, url).to.equal(403);
   });
 
   it('should not update set of tasks from different projects', async () => {
-    url = `/tasks`;
-    response = await supertest(app)
-      .post(url)
-      .set('Accept', 'application/json')
-      .set('Authorization', `Bearer ${userAccessToken}`)
-      .send({
-        columnId,
-        title: 'Task 1',
-        order: 1,
-      });
-    expect(response.status, url).to.equal(201);
-    const firstTaskId = response.body.id;
+    // url = `/tasks`;
+    // response = await supertest(app)
+    //   .post(url)
+    //   .set('Accept', 'application/json')
+    //   .set('Authorization', `Bearer ${userAccessToken}`)
+    //   .send({
+    //     columnId,
+    //     title: 'Task 1',
+    //     order: 1,
+    //   });
+    // expect(response.status, url).to.equal(201);
+    // const firstTaskId = response.body.id;
 
     url = `/projects`;
     response = await supertest(app)
@@ -1426,10 +1445,102 @@ describe('TESTS: task actions', () => {
       .set('Accept', 'application/json')
       .set('Authorization', `Bearer ${userAccessToken}`)
       .send([
-        { id: firstTaskId, columnId, order: 2 },
-        { id: anotherTaskId, columnId, order: 1 },
+        // { id: firstTaskId, columnId, prevColumnId: columnId, order: 2, prevOrder: 1 },
+        { id: anotherTaskId, columnId, prevColumnId: anotherColumnId, order: 2, prevOrder: 1 },
       ]);
     expect(response.status, url).to.equal(400);
+    expect(response.text, url).to.equal(TASK_ERR_MES.SAME_PROJECT);
+  });
+
+  it('should not update set of tasks with non existing column', async () => {
+    url = `/tasks`;
+    response = await supertest(app)
+      .post(url)
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${userAccessToken}`)
+      .send({
+        columnId,
+        title: 'Task 1',
+        order: 1,
+      });
+    expect(response.status, url).to.equal(201);
+    const firstTaskId = response.body.id;
+
+    url = `/tasks`;
+    response = await supertest(app)
+      .patch(url)
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${userAccessToken}`)
+      .send([
+        {
+          id: firstTaskId,
+          columnId: NON_EXISTING_ID,
+          prevColumnId: columnId,
+          order: 1,
+          prevOrder: 1,
+        },
+      ]);
+    expect(response.status, url).to.equal(404);
+  });
+
+  it('should not update set of tasks with wrong prev column or order', async () => {
+    url = `/tasks`;
+    response = await supertest(app)
+      .post(url)
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${userAccessToken}`)
+      .send({
+        columnId,
+        title: 'Task 1',
+        order: 1,
+      });
+    expect(response.status, url).to.equal(201);
+    const firstTaskId = response.body.id;
+
+    url = `/columns`;
+    response = await supertest(app)
+      .post(url)
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${userAccessToken}`)
+      .send({
+        projectId,
+        title: 'Column 2',
+        order: 5,
+      });
+    expect(response.status, url).to.equal(201);
+    const secondColumnId = response.body.id;
+
+    url = `/tasks`;
+    response = await supertest(app)
+      .patch(url)
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${userAccessToken}`)
+      .send([
+        {
+          id: firstTaskId,
+          columnId,
+          prevColumnId: columnId,
+          order: 3,
+          prevOrder: 2,
+        },
+      ]);
+    expect(response.status, url).to.equal(409);
+
+    url = `/tasks`;
+    response = await supertest(app)
+      .patch(url)
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${userAccessToken}`)
+      .send([
+        {
+          id: firstTaskId,
+          columnId,
+          prevColumnId: secondColumnId,
+          order: 2,
+          prevOrder: 1,
+        },
+      ]);
+    expect(response.status, url).to.equal(409);
   });
 
   it('should not update set of tasks with repeating params', async () => {
@@ -1457,6 +1568,7 @@ describe('TESTS: task actions', () => {
         order: 2,
       });
     expect(response.status, url).to.equal(201);
+    const secondTaskId = response.body.id;
 
     url = `/tasks`;
     response = await supertest(app)
@@ -1464,8 +1576,8 @@ describe('TESTS: task actions', () => {
       .set('Accept', 'application/json')
       .set('Authorization', `Bearer ${userAccessToken}`)
       .send([
-        { id: firstTaskId, columnId, order: 2 },
-        { id: firstTaskId, columnId, order: 1 },
+        { id: firstTaskId, columnId, prevColumnId: columnId, order: 2, prevOrder: 1 },
+        { id: firstTaskId, columnId, prevColumnId: columnId, order: 1, prevOrder: 1 },
       ]);
     expect(response.status, url).to.equal(400);
 
@@ -1475,13 +1587,13 @@ describe('TESTS: task actions', () => {
       .set('Accept', 'application/json')
       .set('Authorization', `Bearer ${userAccessToken}`)
       .send([
-        { id: firstTaskId, columnId, order: 3 },
-        { id: firstTaskId, columnId, order: 3 },
+        { id: firstTaskId, columnId, prevColumnId: columnId, order: 3, prevOrder: 1 },
+        { id: secondTaskId, columnId, prevColumnId: columnId, order: 3, prevOrder: 2 },
       ]);
     expect(response.status, url).to.equal(400);
   });
 
-  it('should update set of tasks from different columns', async () => {
+  it('should update set of tasks', async () => {
     url = `/tasks`;
     response = await supertest(app)
       .post(url)
@@ -1526,17 +1638,14 @@ describe('TESTS: task actions', () => {
       .patch(url)
       .set('Accept', 'application/json')
       .set('Authorization', `Bearer ${userAccessToken}`)
-      .send([{ id: secondTaskId, columnId: secondColumnId, order: 1 }]);
-    expect(response.status, url).to.equal(200);
-
-    url = `/tasks`;
-    response = await supertest(app)
-      .patch(url)
-      .set('Accept', 'application/json')
-      .set('Authorization', `Bearer ${userAccessToken}`)
       .send([
-        { id: firstTaskId, columnId, order: 2 },
-        { id: secondTaskId, columnId, order: 1 },
+        {
+          id: secondTaskId,
+          columnId: secondColumnId,
+          prevColumnId: columnId,
+          order: 1,
+          prevOrder: 2,
+        },
       ]);
     expect(response.status, url).to.equal(200);
 
@@ -1546,8 +1655,25 @@ describe('TESTS: task actions', () => {
       .set('Accept', 'application/json')
       .set('Authorization', `Bearer ${userAccessToken}`)
       .send([
-        { id: firstTaskId, columnId, order: 1 },
-        { id: secondTaskId, columnId: secondColumnId, order: 1 },
+        { id: firstTaskId, columnId, prevColumnId: columnId, order: 2, prevOrder: 1 },
+        { id: secondTaskId, columnId, prevColumnId: secondColumnId, order: 1, prevOrder: 1 },
+      ]);
+    expect(response.status, url).to.equal(200);
+
+    url = `/tasks`;
+    response = await supertest(app)
+      .patch(url)
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${userAccessToken}`)
+      .send([
+        { id: firstTaskId, columnId, prevColumnId: columnId, order: 1, prevOrder: 2 },
+        {
+          id: secondTaskId,
+          columnId: secondColumnId,
+          prevColumnId: columnId,
+          order: 1,
+          prevOrder: 1,
+        },
       ]);
     expect(response.status, url).to.equal(200);
 
@@ -1601,7 +1727,15 @@ describe('TESTS: task actions', () => {
       .patch(url)
       .set('Accept', 'application/json')
       .set('Authorization', `Bearer ${memberUserAccessToken}`)
-      .send([{ id: firstTaskId, columnId: secondColumnId, order: 1 }]);
+      .send([
+        {
+          id: firstTaskId,
+          columnId: secondColumnId,
+          prevColumnId: columnId,
+          order: 1,
+          prevOrder: 1,
+        },
+      ]);
     expect(response.status, url).to.equal(200);
   });
 
@@ -1637,7 +1771,15 @@ describe('TESTS: task actions', () => {
       .patch(url)
       .set('Accept', 'application/json')
       .set('Authorization', `Bearer ${userAccessToken}`)
-      .send([{ id: firstTaskId, columnId: secondColumnId, order: 1 }]);
+      .send([
+        {
+          id: firstTaskId,
+          columnId: secondColumnId,
+          prevColumnId: columnId,
+          order: 1,
+          prevOrder: 1,
+        },
+      ]);
     expect(response.status, url).to.equal(200);
   });
 

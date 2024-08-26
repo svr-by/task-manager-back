@@ -3,12 +3,7 @@ import { StatusCodes } from 'http-status-codes';
 
 import { asyncErrorHandler, validationErrorHandler } from '@/services/errorService';
 import { COLUMN_ERR_MES, PROJECT_ERR_MES } from '@/common/errorMessages';
-import {
-  EntityExistsError,
-  NotFoundError,
-  ForbiddenError,
-  BadRequestError,
-} from '@/common/appError';
+import { ConflictError, NotFoundError, ForbiddenError, BadRequestError } from '@/common/appError';
 import {
   IColumn,
   TColumnCreateInput,
@@ -43,7 +38,7 @@ export const createColumn = asyncErrorHandler(
       throw new ForbiddenError(COLUMN_ERR_MES.NUMBER_EXCEEDED);
     }
     if (duplColumn) {
-      throw new EntityExistsError(COLUMN_ERR_MES.REPEATED);
+      throw new ConflictError(COLUMN_ERR_MES.REPEATED);
     }
     const newColumn = await Column.create({ title, projectRef: projectId, order });
     res.status(StatusCodes.CREATED).json(newColumn);
@@ -84,7 +79,7 @@ export const updateColumn = asyncErrorHandler(
       throw new ForbiddenError(PROJECT_ERR_MES.NO_ACCESS);
     }
     if (duplColumn) {
-      throw new EntityExistsError(COLUMN_ERR_MES.REPEATED);
+      throw new ConflictError(COLUMN_ERR_MES.REPEATED);
     }
     const updatedColumn = await Column.findOneAndUpdate(
       { _id: columnId },
@@ -103,7 +98,7 @@ export const updateColumnSet = asyncErrorHandler(
     const columnsBuffer: IColumn[] = [];
     let projectId;
     for (const updatedColumn of update) {
-      const { id, order } = updatedColumn;
+      const { id, order, prevOrder } = updatedColumn;
       const duplColumn = columnsBuffer.find(
         (column) => column._id.toString() === id || column.order === order
       );
@@ -113,6 +108,9 @@ export const updateColumnSet = asyncErrorHandler(
       const column = await Column.findById(id);
       if (!column) {
         throw new NotFoundError(COLUMN_ERR_MES.NOT_FOUND);
+      }
+      if (column.order !== prevOrder) {
+        throw new ConflictError(COLUMN_ERR_MES.NOT_RELEVANT);
       }
       if (!projectId) {
         projectId = column.projectRef.toString();

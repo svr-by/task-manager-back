@@ -58,6 +58,7 @@ export enum COLUMN_ERR_MES {
   UPDATE_ORDER = 'Column order must be a positive integer',
   UPDATE_REPEATED = 'Columns must not be repeated',
   SAME_PROJECT = 'Columns must belong to the same project',
+  NOT_RELEVANT = 'Columns is not relevant',
 }
 
 export enum TASK_ERR_MES {
@@ -73,4 +74,5 @@ export enum TASK_ERR_MES {
   UPDATE_ORDER = 'Task order must be a positive integer',
   UPDATE_REPEATED = 'Tasks must not be repeated',
   SAME_PROJECT = 'Tasks must belong to the same project',
+  NOT_RELEVANT = 'Task is not relevant',
 }
