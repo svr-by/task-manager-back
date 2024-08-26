@@ -1,4 +1,4 @@
-import { validateBodyName, validateBodyEmail, validateBodyPwd } from '@/validators/commonValidator';
+import { validateBodyName, validateBodyEmail, validateBodyPwd } from '@/common/commonValidator';
 
 export const validateSignUpParams = () => [
   validateBodyName(),

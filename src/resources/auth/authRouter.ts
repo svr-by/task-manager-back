@@ -1,7 +1,7 @@
 import express from 'express';
 
-import { validateSignUpParams, validateSignInParams } from '@/validators/authValidator';
-import { signUp, confirmation, signIn, refresh, signOut } from '@/controllers/authController';
+import { validateSignUpParams, validateSignInParams } from './authValidator';
+import { signUp, confirmation, signIn, refresh, signOut } from './authController';
 
 const authRouter = express.Router();
 

@@ -4,7 +4,7 @@ import {
   validateBodyTitle,
   validateBodyOrder,
   validateBodyDesc,
-} from '@/validators/commonValidator';
+} from '@/common/commonValidator';
 import { COLUMN_ERR_MES, TASK_ERR_MES } from '@/common/errorMessages';
 
 export const validateCreateTaskParams = () => [

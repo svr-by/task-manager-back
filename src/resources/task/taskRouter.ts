@@ -1,10 +1,10 @@
 import express from 'express';
-import { validateParamId } from '@/validators/commonValidator';
+import { validateParamId } from '@/common/commonValidator';
 import {
   validateCreateTaskParams,
   validateUpdateTaskParams,
   validateUpdateTaskSetParams,
-} from '@/validators/taskValidator';
+} from './taskValidator';
 import {
   createTask,
   getTask,
@@ -13,7 +13,7 @@ import {
   deleteTask,
   subscribeTask,
   unsubscribeTask,
-} from '@/controllers/taskController';
+} from './taskController';
 
 const taskRouter = express.Router();
 

@@ -5,7 +5,7 @@ import {
   validateBodyTitle,
   validateBodyDesc,
   validateBodyEmail,
-} from './commonValidator';
+} from '@/common/commonValidator';
 
 export const validateCreateProjectParams = () => [
   validateBodyTitle(),

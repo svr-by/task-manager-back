@@ -4,8 +4,8 @@
   "description": "",
   "main": "dist/index.js",
   "scripts": {
-    "start": "node dist/src/index.js",
-    "dev": "ts-node-dev --respawn src/index.ts",
+    "start": "node dist/src/server.js",
+    "dev": "ts-node-dev --respawn src/server.ts",
     "prepare": "npx ts-patch install -s",
     "build": "tsc",
     "lint": "eslint . --ext .ts",

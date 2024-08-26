@@ -16,9 +16,9 @@ import {
   TColumnSetUpdateInput,
 } from '@/types/columnType';
 import config from '@/common/config';
-import Project from '@/models/projectModel';
-import Column from '@/models/columnModel';
-import Task from '@/models/taskModel';
+import Project from '@/resources/project/projectModel';
+import Task from '@/resources/task/taskModel';
+import Column from './columnModel';
 
 const { MAX_COLUMN_NUMBER_PER_PROJECT } = config;
 

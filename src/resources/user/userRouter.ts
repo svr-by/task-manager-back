@@ -1,7 +1,7 @@
 import express from 'express';
-import { validateParamId } from '@/validators/commonValidator';
-import { validateUpdateUserParams } from '@/validators/userValidator';
-import { getAllUsers, getUser, updateUser, deleteUser } from '@/controllers/userController';
+import { validateParamId } from '@/common/commonValidator';
+import { validateUpdateUserParams } from './userValidator';
+import { getAllUsers, getUser, updateUser, deleteUser } from './userController';
 
 const userRouter = express.Router();
 

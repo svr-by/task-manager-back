@@ -4,7 +4,7 @@ import {
   validateBodyProjectId,
   validateBodyOrder,
   validateParamId,
-} from '@/validators/commonValidator';
+} from '@/common/commonValidator';
 import { COLUMN_ERR_MES } from '@/common/errorMessages';
 
 export const validateCreateColumnParams = () => [

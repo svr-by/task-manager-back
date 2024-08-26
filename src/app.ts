@@ -11,11 +11,11 @@ import verifyToken from '@/middlewares/verifyToken';
 import errorHandler from '@/middlewares/errorHandler';
 import swaggerDocument from '@/common/swagger.json';
 import corsOptions from '@/common/corsOptions';
-import authRouter from '@/routes/authRouter';
-import userRouter from '@/routes/userRouter';
-import projectRouter from '@/routes/projectRouter';
-import columnRouter from '@/routes/columnRouter';
-import taskRouter from '@/routes/taskRouter';
+import authRouter from '@/resources/auth/authRouter';
+import userRouter from '@/resources/user/userRouter';
+import projectRouter from '@/resources/project/projectRouter';
+import columnRouter from '@/resources/column/columnRouter';
+import taskRouter from '@/resources/task/taskRouter';
 
 const app = express();
 

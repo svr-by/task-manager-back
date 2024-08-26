@@ -15,8 +15,8 @@ import {
 } from '@/common/appError';
 import { COLUMN_ERR_MES, PROJECT_ERR_MES, TASK_ERR_MES } from '@/common/errorMessages';
 import config from '@/common/config';
-import Column from '@/models/columnModel';
-import Task from '@/models/taskModel';
+import Column from '@/resources/column/columnModel';
+import Task from './taskModel';
 
 const { NODE_ENV, MAX_TASK_NUMBER_PER_PROJECT } = config;
 

@@ -8,7 +8,7 @@ import { ITask } from '@/types/taskType';
 import { asyncErrorHandler, validationErrorHandler } from '@/services/errorService';
 import { NotFoundError, ForbiddenError } from '@/common/appError';
 import { USER_ERR_MES } from '@/common/errorMessages';
-import User from '@/models/userModel';
+import User from '@/resources/user/userModel';
 
 export const getAllUsers = asyncErrorHandler(async (req: Request, res: Response) => {
   const userId = req.userId;

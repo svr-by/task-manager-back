@@ -21,7 +21,7 @@ import {
 import { USER_ERR_MES } from '@/common/errorMessages';
 import { cookieOptions } from '@/common/cookieOptions';
 import config from '@/common/config';
-import User from '@/models/userModel';
+import User from '@/resources/user/userModel';
 
 const { NODE_ENV, JWT_COOKIE_NAME } = config;
 

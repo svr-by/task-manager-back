@@ -1,17 +1,17 @@
 import express from 'express';
-import { validateParamId } from '@/validators/commonValidator';
+import { validateParamId } from '@/common/commonValidator';
 import {
   validateCreateColumnParams,
   validateUpdateColumnParams,
   validateUpdateColumnSetParams,
-} from '@/validators/columnValidator';
+} from './columnValidator';
 import {
   createColumn,
   getColumn,
   updateColumn,
   updateColumnSet,
   deleteColumn,
-} from '@/controllers/columnController';
+} from './columnController';
 
 const columnRouter = express.Router();
 

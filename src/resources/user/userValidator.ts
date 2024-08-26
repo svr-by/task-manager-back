@@ -1,4 +1,4 @@
-import { validateParamId, validateBodyName, validateBodyPwd } from '@/validators/commonValidator';
+import { validateParamId, validateBodyName, validateBodyPwd } from '@/common/commonValidator';
 
 export const validateUpdateUserParams = () => [
   validateParamId(),

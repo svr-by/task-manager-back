@@ -19,10 +19,10 @@ import {
   BadRequestError,
 } from '@/common/appError';
 import config from '@/common/config';
-import User from '@/models/userModel';
-import Project from '@/models/projectModel';
-import Column from '@/models/columnModel';
-import Task from '@/models/taskModel';
+import User from '@/resources/user/userModel';
+import Column from '@/resources/column/columnModel';
+import Task from '@/resources/task/taskModel';
+import Project from './projectModel';
 
 const { NODE_ENV } = config;
 

@@ -1,11 +1,12 @@
 import express from 'express';
+import { validateParamId } from '@/common/commonValidator';
 import {
   validateCreateProjectParams,
   validateUpdateProjectParams,
   validateInviteUserParams,
   validateAcceptInvitationParams,
   validateDeleteMemberParams,
-} from '@/validators/projectValidator';
+} from './projectValidator';
 import {
   createProject,
   getAllProjects,
@@ -17,8 +18,7 @@ import {
   deleteMember,
   inviteOwner,
   becomeOwner,
-} from '@/controllers/projectController';
-import { validateParamId } from '@/validators/commonValidator';
+} from './projectController';
 
 const projectsRouter = express.Router();
 
