@@ -500,7 +500,7 @@ describe('TESTS: user actions', () => {
       .set('Accept', 'application/json')
       .set('Authorization', `Bearer ${anotherUserAccessToken}`);
     expect(response.status, url).to.equal(200);
-    expect(response.body.membersRef, url).to.have.lengthOf(0);
+    expect(response.body.membersRefs, url).to.have.lengthOf(0);
 
     url = `/tasks/${assigneeTaskId}`;
     response = await supertest(app)
@@ -516,6 +516,6 @@ describe('TESTS: user actions', () => {
       .set('Accept', 'application/json')
       .set('Authorization', `Bearer ${anotherUserAccessToken}`);
     expect(response.status, url).to.equal(200);
-    expect(response.body.subscriberRefs, url).to.have.lengthOf(0);
+    expect(response.body.subscribersRefs, url).to.have.lengthOf(0);
   });
 });

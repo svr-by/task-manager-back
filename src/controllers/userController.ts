@@ -64,7 +64,7 @@ export const deleteUser = asyncErrorHandler(async (req, res) => {
   }
   if (user.projects?.length) {
     user.projects.forEach((project) => {
-      (project.membersRef as Types.ObjectId[]) = (project.membersRef as Types.ObjectId[]).filter(
+      (project.membersRefs as Types.ObjectId[]) = (project.membersRefs as Types.ObjectId[]).filter(
         (memberRef) => memberRef.toString() !== userId
       );
       buffer.push(project);
@@ -78,9 +78,9 @@ export const deleteUser = asyncErrorHandler(async (req, res) => {
   }
   if (user.subscriberTasks?.length) {
     user.subscriberTasks.forEach((task) => {
-      (task.subscriberRefs as Types.ObjectId[]) = (task.subscriberRefs as Types.ObjectId[]).filter(
-        (subsRef) => subsRef.toString() !== userId
-      );
+      (task.subscribersRefs as Types.ObjectId[]) = (
+        task.subscribersRefs as Types.ObjectId[]
+      ).filter((subsRef) => subsRef.toString() !== userId);
       buffer.push(task);
     });
   }

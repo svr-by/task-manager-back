@@ -65,7 +65,7 @@
               "ownerRef": {
                 "type": "string"
               },
-              "membersRef": {
+              "membersRefs": {
                 "type": "array",
                 "items": {
                   "type": "string"
@@ -91,7 +91,7 @@
               "ownerRef": {
                 "type": "string"
               },
-              "membersRef": {
+              "membersRefs": {
                 "type": "array",
                 "items": {
                   "type": "string"
@@ -173,7 +173,7 @@
               "assigneeRef": {
                 "type": "string"
               },
-              "subscriberRefs": {
+              "subscribersRefs": {
                 "type": "array",
                 "items": {
                   "type": "string"
@@ -234,7 +234,7 @@
               "assigneeRef": {
                 "type": "string"
               },
-              "subscriberRefs": {
+              "subscribersRefs": {
                 "type": "array",
                 "items": {
                   "type": "string"
@@ -260,7 +260,7 @@
         "title",
         "projectRef",
         "columnRef",
-        "subscriberRefs",
+        "subscribersRefs",
         "order"
       ],
       "properties": {
@@ -290,7 +290,7 @@
             }
           }
         },
-        "subscriberRefs": {
+        "subscribersRefs": {
           "type": "array",
           "items": {
             "type": "object",
@@ -1588,7 +1588,7 @@
                 "assigneeRef": {
                   "type": "string"
                 },
-                "subscriberRefs": {
+                "subscribersRefs": {
                   "type": "array",
                   "items": {
                     "type": "string"
@@ -1679,7 +1679,7 @@
                   "assigneeRef": {
                     "type": "string"
                   },
-                  "subscriberRefs": {
+                  "subscribersRefs": {
                     "type": "array",
                     "items": {
                       "type": "string"

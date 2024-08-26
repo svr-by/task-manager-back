@@ -72,7 +72,7 @@ export const getTask = asyncErrorHandler(async (req: Request, res: Response) => 
   const taskId = req.params.id;
   const task = await Task.findById(taskId)
     .populate('assigneeRef', 'name email')
-    .populate('subscriberRefs', 'name email');
+    .populate('subscribersRefs', 'name email');
 
   if (!task) {
     throw new NotFoundError(TASK_ERR_MES.NOT_FOUND);
@@ -117,12 +117,12 @@ export const updateTask = asyncErrorHandler(
       { new: true }
     )
       .populate('assigneeRef', 'name email')
-      .populate('subscriberRefs', 'name email');
+      .populate('subscribersRefs', 'name email');
 
-    if (NODE_ENV !== 'test' && updatedTask?.subscriberRefs.length) {
+    if (NODE_ENV !== 'test' && updatedTask?.subscribersRefs.length) {
       const taskUrl = `http://${req.headers.host}/tasks/${taskId}`;
       sendUpdateTaskEmail({
-        subscribers: updatedTask.subscriberRefs as IUser[],
+        subscribers: updatedTask.subscribersRefs as IUser[],
         taskUrl,
         title: updatedTask.title,
       });
@@ -171,11 +171,11 @@ export const updateTaskSet = asyncErrorHandler(
     if (NODE_ENV !== 'test') {
       for (const task of tasksBuffer) {
         if (!task.isModified('columnRef')) continue;
-        await task.populate('assigneeRef subscriberRefs', 'name email');
-        if (task.subscriberRefs.length) {
+        await task.populate('assigneeRef subscribersRefs', 'name email');
+        if (task.subscribersRefs.length) {
           const taskUrl = `http://${req.headers.host}/tasks/${task._id}`;
           sendUpdateTaskEmail({
-            subscribers: task.subscriberRefs as IUser[],
+            subscribers: task.subscribersRefs as IUser[],
             taskUrl,
             title: task.title,
           });
@@ -201,10 +201,10 @@ export const deleteTask = asyncErrorHandler(async (req: Request, res: Response) 
   }
   await Task.findByIdAndDelete(taskId);
 
-  if (NODE_ENV !== 'test' && task.subscriberRefs.length) {
-    await task.populate('subscriberRefs', 'email');
+  if (NODE_ENV !== 'test' && task.subscribersRefs.length) {
+    await task.populate('subscribersRefs', 'email');
     sendDeleteTaskEmail({
-      subscribers: task.subscriberRefs as IUser[],
+      subscribers: task.subscribersRefs as IUser[],
       title: task.title,
     });
   }
@@ -223,7 +223,7 @@ export const subscribeTask = asyncErrorHandler(async (req: Request, res: Respons
   if (!hasAccess) {
     throw new ForbiddenError(PROJECT_ERR_MES.NO_ACCESS);
   }
-  (task.subscriberRefs as Types.ObjectId[]).push(createDbId(userId));
+  (task.subscribersRefs as Types.ObjectId[]).push(createDbId(userId));
   await task.save();
   res.sendStatus(StatusCodes.OK);
 });
@@ -240,7 +240,7 @@ export const unsubscribeTask = asyncErrorHandler(async (req: Request, res: Respo
   if (!hasAccess) {
     throw new ForbiddenError(PROJECT_ERR_MES.NO_ACCESS);
   }
-  (task.subscriberRefs as Types.ObjectId[]) = (task.subscriberRefs as Types.ObjectId[]).filter(
+  (task.subscribersRefs as Types.ObjectId[]) = (task.subscribersRefs as Types.ObjectId[]).filter(
     (subsRef) => subsRef.toString() !== userId
   );
   await task.save();

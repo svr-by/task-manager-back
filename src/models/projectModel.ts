@@ -13,7 +13,7 @@ const projectScheme = new Schema<IProject, IProjectModel, IProjectMethods>(
   {
     title: { type: String, required: true, index: true },
     ownerRef: { type: Schema.Types.ObjectId, required: true, ref: MODEL_NAME.USER, index: true },
-    membersRef: { type: [Schema.Types.ObjectId], ref: MODEL_NAME.USER },
+    membersRefs: { type: [Schema.Types.ObjectId], ref: MODEL_NAME.USER },
     tokens: { type: [String] },
     description: { type: String },
   },
@@ -48,7 +48,7 @@ projectScheme.method(
     const isOwner = this.ownerRef.toString() === userId;
     const isMember = options?.onlyOwner
       ? false
-      : this.membersRef.map((memberRef) => memberRef.toString()).includes(userId);
+      : this.membersRefs.map((memberRef) => memberRef.toString()).includes(userId);
     return isOwner || isMember;
   }
 );

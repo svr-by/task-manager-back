@@ -30,7 +30,7 @@ const userScheme = new Schema<IUser, IUserModel, IUserMethods>(
 userScheme.virtual('projects', {
   ref: MODEL_NAME.PROJECT,
   localField: '_id',
-  foreignField: 'membersRef',
+  foreignField: 'membersRefs',
 });
 
 userScheme.virtual('ownProjects', {
@@ -48,7 +48,7 @@ userScheme.virtual('assigneeTasks', {
 userScheme.virtual('subscriberTasks', {
   ref: MODEL_NAME.TASK,
   localField: '_id',
-  foreignField: 'subscriberRefs',
+  foreignField: 'subscribersRefs',
 });
 
 userScheme.pre('save', async function (next) {

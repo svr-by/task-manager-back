@@ -14,7 +14,7 @@ const taskScheme = new Schema<ITask, ITaskModel, ITaskMethods>(
     columnRef: { type: Schema.Types.ObjectId, required: true, ref: MODEL_NAME.COLUMN, index: true },
     title: { type: String, required: true },
     assigneeRef: { type: Schema.Types.ObjectId, ref: MODEL_NAME.USER },
-    subscriberRefs: { type: [Schema.Types.ObjectId], ref: MODEL_NAME.USER },
+    subscribersRefs: { type: [Schema.Types.ObjectId], ref: MODEL_NAME.USER },
     priority: { type: Number },
     order: { type: Number },
     description: { type: String },

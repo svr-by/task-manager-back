@@ -8,7 +8,7 @@ export interface ITask extends Document {
   projectRef: Types.ObjectId | (IProject & IProjectMethods);
   columnRef: Types.ObjectId;
   assigneeRef?: Types.ObjectId | IUser;
-  subscriberRefs: Types.ObjectId[] | IUser[];
+  subscribersRefs: Types.ObjectId[] | IUser[];
   order: number;
   priority?: number;
   description?: string;

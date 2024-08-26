@@ -7,7 +7,7 @@ export interface IProject extends Document {
   _id: Types.ObjectId;
   title: string;
   ownerRef: Types.ObjectId | IUser;
-  membersRef: Types.ObjectId[] | IUser[];
+  membersRefs: Types.ObjectId[] | IUser[];
   columns?: IColumn[];
   tasks?: ITask[];
   tokens: string[];

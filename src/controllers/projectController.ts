@@ -47,7 +47,7 @@ export const createProject = asyncErrorHandler(
 
 export const getAllProjects = asyncErrorHandler(async (req: Request, res: Response) => {
   const projects = await Project.find({}, 'title description').populate(
-    'ownerRef membersRef',
+    'ownerRef membersRefs',
     'name'
   );
   res.json(projects);
@@ -153,7 +153,7 @@ export const becomeMember = asyncErrorHandler(async (req: Request, res: Response
     throw new ForbiddenError(PROJECT_ERR_MES.INV_TKN_INCORRECT);
   }
   project.filterTokens(invToken);
-  (project.membersRef as Types.ObjectId[]).push(createDbId(userId));
+  (project.membersRefs as Types.ObjectId[]).push(createDbId(userId));
   await project.save();
   res.send('Project member has been added');
 });
@@ -167,11 +167,11 @@ export const deleteMember = asyncErrorHandler(async (req: Request, res: Response
   if (!project) {
     throw new ForbiddenError(PROJECT_ERR_MES.NOT_FOUND_OR_NO_ACCESS);
   }
-  const memberIndex = project.membersRef.findIndex((member) => member.toString() === memberId);
+  const memberIndex = project.membersRefs.findIndex((member) => member.toString() === memberId);
   if (memberIndex === -1) {
     throw new NotFoundError(PROJECT_ERR_MES.MEMBER_NOT_FOUND);
   }
-  project.membersRef.splice(memberIndex, 1);
+  project.membersRefs.splice(memberIndex, 1);
   await project.save();
   res.sendStatus(StatusCodes.NO_CONTENT);
 });
@@ -222,7 +222,7 @@ export const becomeOwner = asyncErrorHandler(async (req: Request, res: Response)
     throw new ForbiddenError(PROJECT_ERR_MES.INV_TKN_INCORRECT);
   }
   project.filterTokens(invToken);
-  (project.membersRef as Types.ObjectId[]).push(project.ownerRef as Types.ObjectId);
+  (project.membersRefs as Types.ObjectId[]).push(project.ownerRef as Types.ObjectId);
   project.ownerRef = createDbId(userId);
   await project.save();
   res.send('Project owner has been changed');

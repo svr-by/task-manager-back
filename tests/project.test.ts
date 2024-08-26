@@ -372,7 +372,7 @@ describe('TESTS: project actions', () => {
     const project = response.body[0];
     expect(project.title, url).to.equal('Project 1');
     expect(project.description, url).to.equal('Description');
-    expect(project.membersRef, url).to.have.lengthOf(0);
+    expect(project.membersRefs, url).to.have.lengthOf(0);
     expect(project.ownerRef.id, url).to.equal(userId);
   });
 
@@ -629,7 +629,7 @@ describe('TESTS: project actions', () => {
       .set('Authorization', `Bearer ${userAccessToken}`)
       .send({
         title: 'Updated project 1',
-        membersRef: [NON_EXISTING_ID],
+        membersRefs: [NON_EXISTING_ID],
         columns: [{ title: 'New column' }],
         newField: 'newField',
       });
@@ -643,7 +643,7 @@ describe('TESTS: project actions', () => {
     expect(response.status, url).to.equal(200);
     const project = response.body;
     expect(project.title, url).to.equal('Updated project 1');
-    expect(project.membersRef, url).to.have.lengthOf(0);
+    expect(project.membersRefs, url).to.have.lengthOf(0);
     expect(project.newField, url).to.equal(undefined);
   });
 
@@ -1172,7 +1172,7 @@ describe('TESTS: project actions', () => {
       .set('Authorization', `Bearer ${memberUserAccessToken}`);
     expect(response.status, url).to.equal(200);
     const project = response.body;
-    expect(project.membersRef).to.include(memberUserId);
+    expect(project.membersRefs).to.include(memberUserId);
   });
 
   it('should delete token after accepting member invitation', async () => {
@@ -1332,7 +1332,7 @@ describe('TESTS: project actions', () => {
       .set('Authorization', `Bearer ${userAccessToken}`);
     expect(response.status, url).to.equal(200);
     const project = response.body;
-    expect(project.membersRef).to.not.include(memberUserId);
+    expect(project.membersRefs).to.not.include(memberUserId);
 
     url = `/projects/${projectId}`;
     response = await supertest(app)
@@ -1687,7 +1687,7 @@ describe('TESTS: project actions', () => {
     expect(response.status, url).to.equal(200);
     const project = response.body;
     expect(project.ownerRef, url).to.equal(memberUserId);
-    expect(project.membersRef, url).to.include(userId);
+    expect(project.membersRefs, url).to.include(userId);
   });
 
   it('should delete token after accepting owner invitation', async () => {

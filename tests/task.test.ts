@@ -997,7 +997,7 @@ describe('TESTS: task actions', () => {
         title: 'Updated task 1',
         projectRef: NON_EXISTING_ID,
         columnRef: NON_EXISTING_ID,
-        subscriberRefs: [NON_EXISTING_ID],
+        subscribersRefs: [NON_EXISTING_ID],
         order: 5,
         newField: 'newField',
       });
@@ -1013,7 +1013,7 @@ describe('TESTS: task actions', () => {
     expect(task.title, url).to.equal('Updated task 1');
     expect(task.projectRef, url).to.equal(projectId);
     expect(task.columnRef, url).to.equal(columnId);
-    expect(task.subscriberRefs, url).to.have.lengthOf(0);
+    expect(task.subscribersRefs, url).to.have.lengthOf(0);
     expect(task.order, url).to.equal(1);
     expect(task.newField, url).to.equal(undefined);
   });
@@ -1791,7 +1791,7 @@ describe('TESTS: task actions', () => {
       .set('Accept', 'application/json')
       .set('Authorization', `Bearer ${memberUserAccessToken}`);
     expect(response.status, url).to.equal(200);
-    let subsIds = response.body.subscriberRefs.map((subs: { id: string }) => subs.id);
+    let subsIds = response.body.subscribersRefs.map((subs: { id: string }) => subs.id);
     expect(subsIds, url).to.include(memberUserId);
 
     url = `/tasks/${taskId}/subscribe`;
@@ -1807,7 +1807,7 @@ describe('TESTS: task actions', () => {
       .set('Accept', 'application/json')
       .set('Authorization', `Bearer ${memberUserAccessToken}`);
     expect(response.status, url).to.equal(200);
-    subsIds = response.body.subscriberRefs.map((subs: { id: string }) => subs.id);
+    subsIds = response.body.subscribersRefs.map((subs: { id: string }) => subs.id);
     expect(subsIds, url).to.not.include(userId);
   });
 
@@ -1838,7 +1838,7 @@ describe('TESTS: task actions', () => {
       .set('Accept', 'application/json')
       .set('Authorization', `Bearer ${userAccessToken}`);
     expect(response.status, url).to.equal(200);
-    let subsIds = response.body.subscriberRefs.map((subs: { id: string }) => subs.id);
+    let subsIds = response.body.subscribersRefs.map((subs: { id: string }) => subs.id);
     expect(subsIds, url).to.include(userId);
 
     url = `/tasks/${taskId}/subscribe`;
@@ -1854,7 +1854,7 @@ describe('TESTS: task actions', () => {
       .set('Accept', 'application/json')
       .set('Authorization', `Bearer ${userAccessToken}`);
     expect(response.status, url).to.equal(200);
-    subsIds = response.body.subscriberRefs.map((subs: { id: string }) => subs.id);
+    subsIds = response.body.subscribersRefs.map((subs: { id: string }) => subs.id);
     expect(subsIds, url).to.not.include(userId);
   });
 });
