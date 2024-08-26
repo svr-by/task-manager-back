@@ -815,6 +815,34 @@
                   "title": {
                     "type": "string"
                   },
+                  "ownerRef": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "memberRefs": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        }
+                      }
+                    } 
+                  },
+                  "description": {
+                    "type": "string"
+                  },
                   "id": {
                     "type": "string"
                   } 

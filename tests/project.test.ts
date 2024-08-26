@@ -350,6 +350,32 @@ describe('TESTS: project actions', () => {
     expect(response.body, url).to.have.lengthOf(4);
   });
 
+  it('should return project list of projects with populated users', async () => {
+    url = `/projects`;
+    response = await supertest(app)
+      .post(url)
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${userAccessToken}`)
+      .send({
+        title: 'Project 1',
+        description: 'Description',
+      });
+    expect(response.status, url).to.equal(201);
+
+    url = `/projects`;
+    response = await supertest(app)
+      .get(url)
+      .set('Accept', 'application/json')
+      .set('Authorization', `Bearer ${userAccessToken}`);
+    expect(response.status, url).to.equal(200);
+    expect(response.body, url).to.have.lengthOf(1);
+    const project = response.body[0];
+    expect(project.title, url).to.equal('Project 1');
+    expect(project.description, url).to.equal('Description');
+    expect(project.membersRef, url).to.have.lengthOf(0);
+    expect(project.ownerRef.id, url).to.equal(userId);
+  });
+
   it('should return project by id', async () => {
     url = `/projects`;
     response = await supertest(app)

@@ -46,7 +46,10 @@ export const createProject = asyncErrorHandler(
 );
 
 export const getAllProjects = asyncErrorHandler(async (req: Request, res: Response) => {
-  const projects = await Project.find({}, 'title');
+  const projects = await Project.find({}, 'title description').populate(
+    'ownerRef membersRef',
+    'name'
+  );
   res.json(projects);
 });
 
